@@ -1,0 +1,161 @@
+"use client";
+
+import React, { useState, useEffect, Suspense } from "react";
+import { supabase } from "@/lib/supabase";
+import { useProfile } from "@/hooks/useProfile";
+import Navbar from "@/components/Navbar";
+import AttendanceTracing from "@/components/AttendanceTracing";
+import AttendanceExceptionForm from "@/components/AttendanceExceptionForm";
+import AttendanceInchargeForm from "@/components/AttendanceInchargeForm";
+import { Loader2, ShieldAlert, LogIn, ArrowRight } from "lucide-react";
+
+export default function PersonalAttendancePage() {
+  const [session, setSession] = useState<any>(null);
+  const [initializing, setInitializing] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setInitializing(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setInitializing(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const { profile, isBcdb, loading: loadingProfile } = useProfile(session);
+  const role = Number(profile?.role);
+  const isAttendanceIncharge = role === 3;
+  const isSuperAdmin = role === 1;
+
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  if (initializing || (session && loadingProfile)) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center bg-slate-50 gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
+        <p className="text-slate-600 font-black uppercase tracking-widest text-[10px] animate-pulse">Establishing Secure Connection...</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-20 h-20 bg-white rounded-[2rem] shadow-xl flex items-center justify-center mb-8 border border-slate-100">
+          <LogIn className="w-10 h-10 text-indigo-600" />
+        </div>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Secure Portal</h1>
+        <p className="text-slate-500 font-bold max-w-sm mb-8">Please sign in to access your personal attendance records.</p>
+        <button
+          onClick={() => window.location.href = "/"}
+          className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg active:scale-95"
+        >
+          Sign In Now <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  if (!isBcdb && !isAttendanceIncharge && !isSuperAdmin) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center pt-24">
+          <div className="w-20 h-20 bg-rose-50 rounded-[2rem] shadow-xl flex items-center justify-center mb-8 border border-rose-100">
+            <ShieldAlert className="w-10 h-10 text-rose-500" />
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Access Restricted</h1>
+          <p className="text-slate-500 font-bold max-w-md mb-8">This portal is specifically reserved for active members of the BCDB. If you believe this is an error, please contact your administrative temple in-charge.</p>
+          <button
+            onClick={() => window.location.href = "/"}
+            className="text-slate-400 font-black uppercase tracking-widest text-xs hover:text-indigo-600 transition-colors"
+          >
+            Return to Homepage
+          </button>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-slate-50 pt-20 sm:pt-24 pb-20 overflow-x-hidden">
+        <div className="max-w-[1700px] mx-auto px-3 sm:px-6 lg:px-12">
+          {isAttendanceIncharge && !isBcdb ? (
+            <div className="max-w-xl mx-auto">
+              <div className="mb-6 text-center">
+                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter mb-2 font-outfit uppercase">
+                  Attendance Incharge
+                </h1>
+                <p className="text-slate-500 font-bold text-xs uppercase tracking-[0.2em]">
+                  Harinam bulk marking access
+                </p>
+              </div>
+              <AttendanceInchargeForm
+                session={session}
+                onSuccess={() => setRefreshKey((prev) => prev + 1)}
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+              {/* Main Attendance Section - Left side */}
+              <div className="col-span-1 lg:col-span-8 xl:col-span-9 space-y-6 sm:space-y-8 lg:space-y-10">
+                <div className="animate-in fade-in slide-in-from-left-4 duration-700">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter mb-2 font-outfit uppercase">My Attendance</h1>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                      <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(79,70,229,0.5)]"></span>
+                      <p className="text-slate-500 font-black text-[9px] uppercase tracking-[0.2em]">Official BCDB Record</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Suspense fallback={
+                  <div className="p-32 flex flex-col items-center justify-center gap-6 bg-white/50 rounded-[3rem] border-4 border-dashed border-slate-200">
+                    <Loader2 className="w-12 h-12 text-indigo-200 animate-spin" />
+                    <p className="font-black text-slate-300 uppercase tracking-widest text-xs">Synchronizing Records...</p>
+                  </div>
+                }>
+                  <AttendanceTracing
+                    key={refreshKey}
+                    isAdmin={isSuperAdmin}
+                    forceUserView={true}
+                    session={session}
+                    profile={profile}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Sidebar Space - Now housing the Exception Reporting Form */}
+              <div className="flex flex-col lg:col-span-4 xl:col-span-3 lg:sticky lg:top-28 gap-6 animate-in fade-in slide-in-from-bottom-4 lg:slide-in-from-right-4 duration-1000 delay-300">
+                <AttendanceExceptionForm
+                  userEmail={profile?.email || ""}
+                  onSuccess={() => setRefreshKey(prev => prev + 1)}
+                />
+
+                {isAttendanceIncharge && (
+                  <AttendanceInchargeForm
+                    session={session}
+                    onSuccess={() => setRefreshKey((prev) => prev + 1)}
+                  />
+                )}
+
+                {/* Decorative card for remaining insights */}
+                <div className="bg-white/40 backdrop-blur-sm border border-slate-100 rounded-[2.5rem] p-8 flex flex-col items-center text-center gap-4 opacity-60">
+                  <p className="font-black text-slate-400 uppercase tracking-[0.3em] text-[8px]">Wisdom Analytics</p>
+                  <p className="text-slate-300 font-bold text-[10px] leading-relaxed">Additional patterns and insights will appear here as your data grows.</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
