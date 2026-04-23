@@ -1,13 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin as supabase } from "@/lib/supabase-server";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 
-// Note: Use Service Role Key for Admin operations to bypass RLS if needed, 
-// but here we rely on the is_admin() function in RPC or explicit session check.
+async function requireAdmin(request: NextRequest) {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
+  }
+
+  const token = authHeader.split(" ")[1];
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser(token);
+
+  if (authError || !user) {
+    return { error: NextResponse.json({ error: "Invalid session" }, { status: 401 }) };
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || profile?.role !== 1) {
+    return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
+  }
+
+  return { user };
+}
 
 // GET: Fetch all channels for management
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { data, error } = await supabase
+    const auth = await requireAdmin(request);
+    if ("error" in auth) return auth.error;
+
+    const { data, error } = await supabaseAdmin!
       .from("youtube_channels")
       .select("*")
       .order("order_index", { ascending: true });
@@ -22,8 +51,11 @@ export async function GET() {
 // POST: Add new channel
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAdmin(request);
+    if ("error" in auth) return auth.error;
+
     const body = await request.json();
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin!
       .from("youtube_channels")
       .insert([body])
       .select();
@@ -38,9 +70,12 @@ export async function POST(request: NextRequest) {
 // PUT: Update channel
 export async function PUT(request: NextRequest) {
   try {
+    const auth = await requireAdmin(request);
+    if ("error" in auth) return auth.error;
+
     const body = await request.json();
     const { id, ...updates } = body;
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin!
       .from("youtube_channels")
       .update(updates)
       .eq("id", id)
@@ -56,9 +91,12 @@ export async function PUT(request: NextRequest) {
 // DELETE: Remove channel
 export async function DELETE(request: NextRequest) {
   try {
+    const auth = await requireAdmin(request);
+    if ("error" in auth) return auth.error;
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-    const { error } = await supabase
+    const { error } = await supabaseAdmin!
       .from("youtube_channels")
       .delete()
       .eq("id", id);

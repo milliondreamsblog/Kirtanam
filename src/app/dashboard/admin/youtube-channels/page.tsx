@@ -32,10 +32,26 @@ export default function YouTubeAdmin() {
     fetchChannels();
   }, []);
 
+  const getAuthHeaders = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      throw new Error("Missing session");
+    }
+
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    };
+  };
+
   const fetchChannels = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/youtube-channels");
+      const headers = await getAuthHeaders();
+      const res = await fetch("/api/admin/youtube-channels", { headers });
       const data = await res.json();
       setChannels(data.channels || []);
     } catch (err) {
@@ -97,9 +113,10 @@ export default function YouTubeAdmin() {
   const handleSave = async () => {
     try {
       const method = activeItem?.id ? "PUT" : "POST";
+      const headers = await getAuthHeaders();
       const res = await fetch("/api/admin/youtube-channels", {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(activeItem)
       });
       if (res.ok) {
@@ -114,7 +131,8 @@ export default function YouTubeAdmin() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this channel?")) return;
     try {
-      const res = await fetch(`/api/admin/youtube-channels?id=${id}`, { method: "DELETE" });
+      const headers = await getAuthHeaders();
+      const res = await fetch(`/api/admin/youtube-channels?id=${id}`, { method: "DELETE", headers });
       if (res.ok) fetchChannels();
     } catch (err) {
       alert("Delete failed");
