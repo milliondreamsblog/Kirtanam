@@ -81,7 +81,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }
 
   // 2. RBAC Logic (Authorized User Check)
-  if (session && profile && pathname.startsWith("/admin")) {
+  if (session && profile && (pathname.startsWith("/admin") || pathname.startsWith("/dashboard/admin"))) {
     if (profile.role !== 1) {
       return <AccessDenied />;
     }
