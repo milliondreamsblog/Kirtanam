@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Clock, Radio, Heart, Share2 } from "lucide-react";
 import OptimizedVideoPlayer from "@/components/OptimizedVideoPlayer";
 import { openExternal } from "@/lib/device";
+import { logOpenExternal } from "@/lib/auth-client";
 import type { VideoItem, Channel } from "../types";
 
 interface VideoPlayerSectionProps {
@@ -97,12 +98,13 @@ export default function VideoPlayerSection({
             <div className="flex gap-2 shrink-0">
               {/* Watch on YouTube */}
               <button
-                onClick={() =>
-                  activeVideoId &&
+                onClick={() => {
+                  if (!activeVideoId) return;
+                  logOpenExternal(activeVideoId);
                   openExternal(
                     `https://www.youtube.com/watch?v=${activeVideoId}`
-                  )
-                }
+                  );
+                }}
                 className="flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white rounded-xl hover:bg-[#cc0000] transition-all shadow-md active:scale-95"
                 title="Watch on YouTube"
               >

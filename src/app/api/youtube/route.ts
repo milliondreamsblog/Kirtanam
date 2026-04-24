@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
+import {
+  requireUser,
+  getUserAllowedChannelIds,
+  logActivity,
+} from "@/lib/auth-server";
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const CACHE_SECONDS = 1800; // 30 minutes
-
-interface VideoItem {
-  id: string;
-  title: string;
-  thumbnail: string;
-  date: string;
-  published: string;
-  type: "video" | "live" | "short";
-}
 
 function formatRelativeDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -30,17 +27,61 @@ function formatRelativeDate(dateStr: string): string {
   return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
+/** Resolve the owning channel of a playlist or video from our synced index. */
+async function lookupOwningChannel(kind: "playlist" | "video", id: string): Promise<string | null> {
+  if (!supabaseAdmin) return null;
+  const table = kind === "playlist" ? "yt_playlists" : "yt_videos";
+  const idCol = kind === "playlist" ? "playlist_id" : "video_id";
+  const { data } = await supabaseAdmin
+    .from(table)
+    .select("channel_id")
+    .eq(idCol, id)
+    .single();
+  return (data?.channel_id as string | undefined) ?? null;
+}
+
 export async function GET(request: NextRequest) {
+  const auth = await requireUser(request);
+  if ("error" in auth) return auth.error;
+
   const { searchParams } = new URL(request.url);
   const videoId = searchParams.get("videoId");
   const channelId = searchParams.get("channelId");
-  const playlistId = searchParams.get("playlistId"); // For entering a playlist
+  const playlistId = searchParams.get("playlistId");
   const type = searchParams.get("type") ?? "videos";
   const pageToken = searchParams.get("pageToken") ?? "";
   const maxResults = Math.min(parseInt(searchParams.get("maxResults") ?? "50"), 50);
 
   if (!YOUTUBE_API_KEY) {
     return NextResponse.json({ error: "API Key missing" }, { status: 503 });
+  }
+
+  const allowed = await getUserAllowedChannelIds(auth.user.id);
+
+  // Resolve the owning channel of whatever the caller wants to access, so we
+  // can check it against the monk's allowed set before hitting YouTube.
+  let targetChannel: string | null = null;
+  if (channelId) {
+    targetChannel = channelId;
+  } else if (playlistId) {
+    targetChannel = await lookupOwningChannel("playlist", playlistId);
+  } else if (videoId) {
+    targetChannel = await lookupOwningChannel("video", videoId);
+  }
+
+  if (!targetChannel) {
+    return NextResponse.json({ error: "Missing or unknown identity parameter" }, { status: 400 });
+  }
+
+  if (!allowed.includes(targetChannel)) {
+    await logActivity({
+      userId: auth.user.id,
+      action: "access_denied",
+      channelId: targetChannel,
+      videoId: videoId ?? null,
+      metadata: { reason: "youtube_fetch_outside_allowed", playlistId },
+    });
+    return NextResponse.json({ error: "Not available" }, { status: 403 });
   }
 
   // Handle single video fetch if videoId is provided
@@ -63,9 +104,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         id: item.id,
         title: snippet.title,
-        thumbnail: snippet.thumbnails?.maxres?.url ?? 
-                   snippet.thumbnails?.high?.url ?? 
-                   snippet.thumbnails?.medium?.url ?? 
+        thumbnail: snippet.thumbnails?.maxres?.url ??
+                   snippet.thumbnails?.high?.url ??
+                   snippet.thumbnails?.medium?.url ??
                    `https://i.ytimg.com/vi/${item.id}/mqdefault.jpg`,
         date: snippet.publishedAt ? formatRelativeDate(snippet.publishedAt) : "",
         published: snippet.publishedAt ?? "",
@@ -77,16 +118,11 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  if (!channelId && !playlistId) {
-    return NextResponse.json({ error: "Missing identity parameter" }, { status: 400 });
-  }
-
   try {
     let apiUrl: URL;
     let channelTitle = "";
     let channelLogo = "";
 
-    // Step 1: If we have a channelId, get basic info
     if (channelId) {
       const channelUrl = new URL("https://www.googleapis.com/youtube/v3/channels");
       channelUrl.searchParams.set("id", channelId);
@@ -101,7 +137,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Step 2: Determine which endpoint to call
     if (playlistId) {
       apiUrl = new URL("https://www.googleapis.com/youtube/v3/playlistItems");
       apiUrl.searchParams.set("playlistId", playlistId);
@@ -111,7 +146,6 @@ export async function GET(request: NextRequest) {
       apiUrl.searchParams.set("channelId", channelId!);
       apiUrl.searchParams.set("part", "snippet,contentDetails");
     } else {
-      // DEFAULT: Use the free "Uploads" playlist (1 Coin) for both Videos and Live
       const channelUrl = new URL("https://www.googleapis.com/youtube/v3/channels");
       channelUrl.searchParams.set("id", channelId!);
       channelUrl.searchParams.set("key", YOUTUBE_API_KEY!);
@@ -139,14 +173,12 @@ export async function GET(request: NextRequest) {
         const snippet = item.snippet;
         if (!snippet) return null;
 
-        // Skip private or deleted videos as they can't be played
         const title = snippet.title ?? "";
         if (title === "Private video" || title === "Deleted video") return null;
 
         const isPlaylistItems = !!playlistId;
         const isPlaylistTab = type === "playlists" && !isPlaylistItems;
 
-        // Ultra-permissive ID extraction (Crucial for ISKCON NVCC)
         let id = "";
         if (isPlaylistTab) {
           id = item.id;
@@ -159,8 +191,6 @@ export async function GET(request: NextRequest) {
         if (!id) return null;
 
         const isLiveNow = snippet.liveBroadcastContent === "live" || snippet.liveBroadcastContent === "completed";
-        
-        // Filter: If user is on the "Live" tab, ONLY show videos that were/are live
         if (type === "live" && !isLiveNow) return null;
 
         return {
@@ -176,7 +206,16 @@ export async function GET(request: NextRequest) {
           playlistCount: item.contentDetails?.itemCount,
         };
       })
-      .filter(Boolean); // Remove nulls
+      .filter(Boolean);
+
+    if (channelId) {
+      logActivity({
+        userId: auth.user.id,
+        action: "view_channel",
+        channelId: channelId,
+        metadata: { type, playlistId: playlistId ?? null },
+      });
+    }
 
     return NextResponse.json(
       {
@@ -185,7 +224,7 @@ export async function GET(request: NextRequest) {
         channelTitle,
         channelLogo,
       },
-      { headers: { "Cache-Control": `public, s-maxage=${CACHE_SECONDS}, stale-while-revalidate=60` } }
+      { headers: { "Cache-Control": `private, max-age=${CACHE_SECONDS}` } }
     );
   } catch (error) {
     console.error("API error:", error);

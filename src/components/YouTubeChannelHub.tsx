@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CheckCircle2, AlertCircle, X } from "lucide-react";
 import ChannelPickerPage from "./youtube-hub/views/ChannelPickerPage";
@@ -44,7 +44,7 @@ export default function YouTubeChannelHub() {
   const [shareVideoTitle, setShareVideoTitle] = useState("Spiritual Lecture");
 
   // ── Channel list (needed to resolve channelId → Channel object) ──────────
-  const { channels } = useChannels();
+  const { channels, isLoading: channelsLoading } = useChannels();
 
   // ── URL-derived state (single source of truth) ───────────────────────────
   const urlChannelId = searchParams.get("channel");
@@ -63,6 +63,27 @@ export default function YouTubeChannelHub() {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
+
+  // If the URL points at a channel the monk no longer has access to (admin
+  // revoked it, or bookmark from before assignment), surface a clear message
+  // and drop the stale params so they land on the channel picker cleanly.
+  useEffect(() => {
+    if (!urlChannelId || channelsLoading) return;
+    const exists = channels.some((c) => c.channel_id === urlChannelId);
+    if (exists) return;
+    setNotification({
+      message: "This channel is no longer available to you.",
+      type: "error",
+    });
+    const query = new URLSearchParams(searchParams.toString());
+    query.delete("channel");
+    query.delete("playlist");
+    query.delete("v");
+    const qs = query.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    setTimeout(() => setNotification(null), 3500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlChannelId, channelsLoading, channels]);
 
   // ── Navigation handlers ──────────────────────────────────────────────────
 

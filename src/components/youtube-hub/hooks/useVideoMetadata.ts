@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { authFetch } from "@/lib/auth-client";
 import type { VideoItem } from "../types";
 
 /**
@@ -14,7 +15,7 @@ export function useVideoMetadata(videoId: string | null) {
   return useQuery<VideoItem>({
     queryKey: ["video-metadata", videoId],
     queryFn: async () => {
-      const res = await fetch(`/api/youtube?videoId=${videoId}`);
+      const res = await authFetch(`/api/youtube?videoId=${videoId}`);
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error ?? `Failed to fetch video metadata (HTTP ${res.status})`);

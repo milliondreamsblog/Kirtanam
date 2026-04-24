@@ -2277,7 +2277,8 @@ export default function AdminPanel() {
     if (!activeYtChannel?.channel_id) return;
     setIsFetchingYt(true);
     try {
-      const res = await fetch(`/api/youtube?channelId=${activeYtChannel.channel_id}`);
+      const { authFetch } = await import("@/lib/auth-client");
+      const res = await authFetch(`/api/youtube?channelId=${activeYtChannel.channel_id}`);
       const data = await res.json();
       if (data.channelTitle) {
         setActiveYtChannel((prev: any) => ({

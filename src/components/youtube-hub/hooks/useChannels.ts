@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
+import { authFetch } from "@/lib/auth-client";
 import type { Channel } from "../types";
 
 async function fetchChannels(): Promise<Channel[]> {
-  const res = await fetch("/api/youtube/channels");
+  const res = await authFetch("/api/youtube/channels");
+  if (res.status === 401) return [];
   if (!res.ok) throw new Error("Failed to load channels");
   const data = await res.json();
   return data.channels ?? [];

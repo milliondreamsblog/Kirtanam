@@ -360,6 +360,21 @@ export default function ChannelPickerPage({
               </div>
             )}
           </div>
+        ) : !loadingChannels && channels.length === 0 ? (
+          /* No channels assigned — admin must grant access first */
+          <div className="max-w-xl mx-auto text-center py-16 px-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 mb-6">
+              <Video className="w-7 h-7 text-indigo-500" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-devo-950 tracking-tight mb-2">
+              No channels yet
+            </h2>
+            <p className="text-sm text-slate-500 leading-relaxed">
+              You haven't been assigned any YouTube channels yet. Please contact
+              your ashram admin to get access to the channels approved for your
+              seva.
+            </p>
+          </div>
         ) : (
           /* Channel Grid */
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-8 gap-x-4 sm:gap-x-6">

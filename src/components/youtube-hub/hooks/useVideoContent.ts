@@ -1,4 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { authFetch } from "@/lib/auth-client";
 import type { VideoContentPage } from "../types";
 
 /**
@@ -27,7 +28,7 @@ export function useVideoContent(
       const ptParam = pageParam ? `&pageToken=${pageParam}` : "";
       const bust = `&_t=${Date.now()}`; // keep parity with original cache-busting
 
-      const res = await fetch(
+      const res = await authFetch(
         `/api/youtube?channelId=${channelId}&type=${tab}${plParam}${ptParam}${bust}`,
       );
 

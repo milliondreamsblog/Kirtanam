@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
 import { openExternal } from "@/lib/device";
+import { logOpenExternal } from "@/lib/auth-client";
 
 interface OptimizedVideoPlayerProps {
   videoId: string;
@@ -39,7 +40,7 @@ export default function OptimizedVideoPlayer({
 
   // Fallback URL for standard iframe (Used if JS API fails or is blocked)
   // vq=small (240p) ensures much faster loading on slower connections
-  const fallbackUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&vq=small`;
+  const fallbackUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&vq=small`;
 
   // 1. Load YouTube IFrame API Script (Globally once)
   useEffect(() => {
@@ -141,6 +142,7 @@ export default function OptimizedVideoPlayer({
           rel: 0,
           modestbranding: 1,
           iv_load_policy: 3,
+          disablekb: 1,
         },
         events: {
           onReady: () => {
@@ -277,14 +279,17 @@ export default function OptimizedVideoPlayer({
             title="Privacy Restricted"
             onClickCapture={(e) => {
               e.stopPropagation(); e.preventDefault();
+              logOpenExternal(videoId);
               openExternal(`https://www.youtube.com/watch?v=${videoId}`);
             }}
             onTouchStartCapture={(e) => {
               e.stopPropagation(); e.preventDefault();
+              logOpenExternal(videoId);
               openExternal(`https://www.youtube.com/watch?v=${videoId}`);
             }}
             onContextMenuCapture={(e) => {
               e.stopPropagation(); e.preventDefault();
+              logOpenExternal(videoId);
               openExternal(`https://www.youtube.com/watch?v=${videoId}`);
             }}
           />
@@ -294,14 +299,17 @@ export default function OptimizedVideoPlayer({
             className="absolute top-0 left-0 w-[80%] h-[20%] z-[9999] cursor-default pointer-events-auto bg-white/[0.01] touch-none"
             onClickCapture={(e) => {
               e.stopPropagation(); e.preventDefault();
+              logOpenExternal(videoId);
               openExternal(`https://www.youtube.com/watch?v=${videoId}`);
             }}
             onTouchStartCapture={(e) => {
               e.stopPropagation(); e.preventDefault();
+              logOpenExternal(videoId);
               openExternal(`https://www.youtube.com/watch?v=${videoId}`);
             }}
             onContextMenuCapture={(e) => {
               e.stopPropagation(); e.preventDefault();
+              logOpenExternal(videoId);
               openExternal(`https://www.youtube.com/watch?v=${videoId}`);
             }}
           />

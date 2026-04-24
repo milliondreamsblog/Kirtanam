@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/useDebounce";
+import { authFetch } from "@/lib/auth-client";
 import type { VideoItem } from "../types";
 
 interface SearchResult {
@@ -26,7 +27,8 @@ export function useGlobalSearch(query: string, channelIds: string[] = []) {
         url += `&channelId=${channelIds.join(",")}`;
       }
 
-      const res = await fetch(url);
+      const res = await authFetch(url);
+      if (res.status === 401) return { items: [], count: 0 };
       if (!res.ok) throw new Error("Search request failed");
 
       return res.json() as Promise<SearchResult>;

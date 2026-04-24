@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { authFetch } from "@/lib/auth-client";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -195,7 +196,7 @@ export function useAdminYouTube(accessToken: string | null) {
   async function fetchYouTubeInfo(
     channelId: string
   ): Promise<{ channelTitle: string; channelLogo: string }> {
-    const res = await fetch(
+    const res = await authFetch(
       `/api/youtube?channelId=${encodeURIComponent(channelId)}`
     );
 

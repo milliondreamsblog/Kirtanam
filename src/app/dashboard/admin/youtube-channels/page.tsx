@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Search, Plus, Trash2, Edit3, Globe, Save, RefreshCw, Upload, X, Check } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
+import { authFetch } from "@/lib/auth-client";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -65,7 +66,7 @@ export default function YouTubeAdmin() {
     if (!activeItem?.channel_id) return;
     setFetching(true);
     try {
-      const res = await fetch(`/api/youtube?channelId=${activeItem.channel_id}`);
+      const res = await authFetch(`/api/youtube?channelId=${activeItem.channel_id}`);
       const data = await res.json();
       if (data.channelTitle) {
         setActiveItem(prev => ({
