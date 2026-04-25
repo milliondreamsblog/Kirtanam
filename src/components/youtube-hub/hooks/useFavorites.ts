@@ -37,7 +37,8 @@ export function useFavorites() {
   const toggleMutation = useMutation<
     { action: "added" | "removed"; video_id: string },
     Error,
-    string // videoId
+    string, // videoId
+    { previous?: FavoritesData }
   >({
     mutationFn: async (videoId: string) => {
       const token = await getAccessToken();
