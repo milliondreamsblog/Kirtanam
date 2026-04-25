@@ -6,9 +6,19 @@
     "dev": "next dev -p 3100",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "app:add": "cap add android",
+    "app:sync": "cap sync android",
+    "app:open": "cap open android",
+    "app:assets": "capacitor-assets generate --android"
   },
   "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/app": "^6.0.2",
+    "@capacitor/browser": "^6.0.5",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/screen-orientation": "^6.0.3",
+    "@capacitor/status-bar": "^6.0.2",
     "@supabase/supabase-js": "^2.100.1",
     "@tanstack/react-query": "^5.99.0",
     "@tanstack/react-query-devtools": "^5.99.0",
@@ -24,6 +34,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.2.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
