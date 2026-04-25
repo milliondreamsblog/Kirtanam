@@ -1822,7 +1822,7 @@ export default function AdminPanel() {
                       <div className="flex gap-3">
                         <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">2</span>
                         <p>Set <strong>Server Address</strong> to: <br/> 
-                           <code className="bg-black/20 p-1 rounded mt-1 inline-block select-all">https://ashram-connect-nine.vercel.app</code>
+                           <code className="bg-black/20 p-1 rounded mt-1 inline-block select-all">https://kirtanam.vercel.app</code>
                         </p>
                       </div>
                       <div className="flex gap-3">
@@ -1835,7 +1835,7 @@ export default function AdminPanel() {
                    </div>
                    <button 
                      onClick={() => {
-                        navigator.clipboard.writeText("https://ashram-connect-nine.vercel.app");
+                        navigator.clipboard.writeText("https://kirtanam.vercel.app");
                         setSubmitMessage({ type: "success", text: "Server URL copied to clipboard!" });
                         setTimeout(() => setSubmitMessage(null), 3000);
                      }}

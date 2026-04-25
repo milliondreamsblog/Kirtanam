@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is the Ashram Connect / Kirtanam app built with [Next.js](https://nextjs.org).
+
+Live site: [https://kirtanam.vercel.app](https://kirtanam.vercel.app)
 
 ## Getting Started
 
@@ -14,7 +16,7 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3100](http://localhost:3100) with your browser to see the local app.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

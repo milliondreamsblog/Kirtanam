@@ -407,7 +407,8 @@ cp .env.example .env.local   # (once .env.example is created — T8)
 # 3. Run development server (note: port 3100, not 3000)
 pnpm dev
 
-# App is available at http://localhost:3100
+# Local app is available at http://localhost:3100
+# Production app is available at https://kirtanam.vercel.app
 ```
 
 ### Triggering YouTube Sync Manually (local)
@@ -417,6 +418,13 @@ The Vercel cron job runs at 2 AM daily in production. To trigger it locally:
 ```bash
 curl -H "Authorization: Bearer YOUR_CRON_SECRET" \
   http://localhost:3100/api/admin/youtube/sync-all
+```
+
+Production endpoint:
+
+```bash
+curl -H "Authorization: Bearer YOUR_CRON_SECRET" \
+  https://kirtanam.vercel.app/api/admin/youtube/sync-all
 ```
 
 ---

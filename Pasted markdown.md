@@ -250,6 +250,7 @@ Run the SQL files in your Supabase SQL editor **in this order**:
 ```/dev/null/run.sh#L1-2
 pnpm dev
 # App starts at http://localhost:3100
+# Production app runs at https://kirtanam.vercel.app
 ```
 
 ---

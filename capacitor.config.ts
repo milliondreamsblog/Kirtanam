@@ -21,11 +21,11 @@ const config: CapacitorConfig = {
   webDir: "out",
   server: {
     // CHANGE THIS to your production Vercel URL.
-    url: "https://ashram-connect.vercel.app",
+    url: "https://kirtanam.vercel.app",
     androidScheme: "https",
     // Allow navigation only to your own domain. Anything else (YouTube,
     // share links) opens in the system browser via @capacitor/browser.
-    allowNavigation: ["ashram-connect.vercel.app"],
+    allowNavigation: ["kirtanam.vercel.app"],
   },
   android: {
     // Hides the loading spinner that appears before first paint.
