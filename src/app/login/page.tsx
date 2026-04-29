@@ -11,7 +11,6 @@ export default function LoginPage() {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // If already logged in, redirect home
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         router.push("/");
@@ -20,7 +19,9 @@ export default function LoginPage() {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         router.push("/");
       }
@@ -31,15 +32,15 @@ export default function LoginPage() {
 
   if (checking) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <Loader2 className="w-12 h-12 animate-spin text-devo-600" />
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-devo-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-xl">
+    <div className="min-h-screen px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mx-auto flex min-h-[calc(100vh-7rem)] w-full max-w-7xl items-center">
         <AuthUI redirectTo="/" />
       </div>
     </div>

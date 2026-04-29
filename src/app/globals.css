@@ -2,53 +2,113 @@
 
 @theme {
   --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-display: var(--font-display), "Cormorant Garamond", serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  /* Devotional Palette */
   --color-devo-50: #fff8f0;
   --color-devo-100: #ffeedb;
   --color-devo-200: #ffd6ad;
   --color-devo-300: #ffbc7a;
   --color-devo-400: #ff9d42;
   --color-devo-500: #f97316;
-  /* Saffron base */
   --color-devo-600: #ea580c;
   --color-devo-700: #c2410c;
   --color-devo-800: #9a3412;
   --color-devo-900: #7c2d12;
   --color-devo-950: #431407;
-  /* Deep maroon */
 
   --color-accent-gold: #fbbf24;
   --color-accent-maroon: #831843;
   --color-background-warm: #fcf9f2;
+  --color-paper: #fffaf3;
+  --color-ink-soft: #5f4a37;
 }
 
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
 
   html,
   body {
     background-color: var(--color-background-warm);
-    background-image: radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.1) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(339, 100%, 85%, 0.1) 0px, transparent 50%);
+    background-image:
+      radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(12, 64%, 45%, 0.08) 0px, transparent 45%);
     background-attachment: fixed;
     color: var(--color-devo-950);
-    @apply antialiased min-h-screen text-slate-800;
-    /* Hide scrollbar but keep functionality */
+    @apply min-h-screen antialiased text-slate-800;
     -ms-overflow-style: none;
-    /* IE and Edge */
     scrollbar-width: none;
-    /* Firefox */
   }
 
   html::-webkit-scrollbar,
   body::-webkit-scrollbar {
     display: none;
-    /* Chrome, Safari, Opera */
+  }
+
+  body {
+    font-feature-settings: "ss01" 1, "cv05" 1;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    transition:
+      color 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease,
+      opacity 180ms ease;
+  }
+
+  ::selection {
+    background: rgba(234, 88, 12, 0.18);
+    color: var(--color-devo-950);
   }
 }
 
 @layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .glass-panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 250, 243, 0.72));
+    border: 1px solid rgba(124, 45, 18, 0.08);
+    box-shadow:
+      0 30px 80px -30px rgba(91, 47, 16, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(22px);
+  }
+
+  .paper-panel {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 248, 238, 0.94)),
+      repeating-linear-gradient(
+        0deg,
+        rgba(124, 45, 18, 0.02),
+        rgba(124, 45, 18, 0.02) 1px,
+        transparent 1px,
+        transparent 28px
+      );
+    border: 1px solid rgba(124, 45, 18, 0.08);
+    box-shadow: 0 24px 70px -34px rgba(68, 30, 8, 0.28);
+  }
+
+  .ornate-ring {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.6),
+      0 0 0 10px rgba(255, 248, 238, 0.42);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

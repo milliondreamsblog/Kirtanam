@@ -79,12 +79,44 @@ export async function getUserAllowedChannelIds(userId: string): Promise<string[]
     return data.map((r) => r.channel_id as string);
   }
 
-  const { data, error } = await supabaseAdmin
-    .from("user_channel_access")
-    .select("channel_id")
-    .eq("user_id", userId);
-  if (error || !data) return [];
-  return data.map((r) => r.channel_id as string);
+  const [{ data: direct, error: directError }, { data: accountLinks, error: accountError }, { data: accountChannels, error: accountChannelsError }, { data: accounts, error: accountsError }] =
+    await Promise.all([
+      supabaseAdmin
+        .from("user_channel_access")
+        .select("channel_id")
+        .eq("user_id", userId),
+      supabaseAdmin
+        .from("user_account_access")
+        .select("account_id")
+        .eq("user_id", userId),
+      supabaseAdmin.from("account_channel_access").select("account_id, channel_id"),
+      supabaseAdmin.from("channel_accounts").select("id, is_active"),
+    ]);
+
+  if (directError || accountError || accountChannelsError || accountsError) return [];
+
+  const allowed = new Set<string>();
+  for (const row of direct ?? []) {
+    allowed.add(row.channel_id as string);
+  }
+
+  const activeAccounts = new Set(
+    (accounts ?? [])
+      .filter((account) => account.is_active)
+      .map((account) => account.id as string),
+  );
+
+  const linkedAccountIds = new Set(
+    (accountLinks ?? []).map((row) => row.account_id as string).filter((id) => activeAccounts.has(id)),
+  );
+
+  for (const row of accountChannels ?? []) {
+    if (linkedAccountIds.has(row.account_id as string) && row.channel_id) {
+      allowed.add(row.channel_id as string);
+    }
+  }
+
+  return Array.from(allowed);
 }
 
 export type ActivityAction =

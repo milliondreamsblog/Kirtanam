@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
-  Search,
-  Loader2,
-  X,
-  Heart,
-  SlidersHorizontal,
-  ChevronDown,
   Check,
+  ChevronDown,
+  Heart,
   Layers,
+  Loader2,
   Play,
+  Search,
+  SlidersHorizontal,
   Video,
+  X,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useChannels } from "../hooks/useChannels";
@@ -20,7 +20,6 @@ import { useGlobalSearch } from "../hooks/useGlobalSearch";
 import type { VideoItem } from "../types";
 
 interface ChannelPickerPageProps {
-  /** Called when the user clicks a channel card */
   onChannelSelect: (channelId: string) => void;
 }
 
@@ -38,10 +37,9 @@ export default function ChannelPickerPage({
   const { channels, isLoading: loadingChannels } = useChannels();
   const { results: globalResults, isSearching } = useGlobalSearch(
     searchQuery,
-    selectedChannelIds
+    selectedChannelIds,
   );
 
-  // Close filter dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -51,6 +49,7 @@ export default function ChannelPickerPage({
         setIsFilterOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -73,143 +72,133 @@ export default function ChannelPickerPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 sm:py-16 px-4">
-      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-16">
+    <div className="min-h-screen px-4 py-10 sm:py-16">
+      <div className="mx-auto max-w-7xl space-y-10 sm:space-y-16">
+        <div className="glass-panel mx-auto animate-in fade-in slide-in-from-top-4 rounded-[2.2rem] px-5 py-8 text-center duration-700 sm:px-8 sm:py-10">
+          <div className="mx-auto max-w-4xl space-y-4 sm:space-y-5">
+            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-devo-700/60">
+              Spiritual Library
+            </p>
+            <h1 className="font-display text-5xl leading-none text-devo-950 sm:text-7xl">
+              Select a teacher,
+              <span className="ml-3 inline-block bg-gradient-to-r from-devo-700 via-devo-500 to-amber-500 bg-clip-text text-transparent">
+                resume a lecture
+              </span>
+            </h1>
+            <p className="mx-auto max-w-2xl text-balance text-sm leading-7 text-devo-900/70 sm:text-base">
+              Search across approved channels or enter a specific archive directly.
+              Favorites and playlists stay available from the same surface.
+            </p>
+          </div>
 
-        {/* ── Header ─────────────────────────────────────────────────────── */}
-        <div className="text-center space-y-3 sm:space-y-5 mx-auto animate-in fade-in slide-in-from-top-4 duration-700">
-          <h1 className="text-3xl sm:text-6xl font-outfit font-black text-devo-950 tracking-tight leading-tight">
-            Spiritual{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-devo-600 to-accent-gold">
-              Library
-            </span>
-          </h1>
-          <p className="text-xs sm:text-base text-devo-800 font-bold opacity-60 uppercase tracking-[0.2em]">
-            Select a channel or search below
-          </p>
-
-          {/* ── Controls Row ─────────────────────────────────────────────── */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mt-8 sm:mt-12 max-w-4xl mx-auto px-4">
-
-            {/* Search Bar */}
-            <div className="relative flex-1 group">
-              <div className="absolute inset-0 bg-devo-500/10 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity" />
+          <div className="mx-auto mt-8 flex max-w-4xl flex-col items-stretch gap-4 px-4 sm:mt-12 sm:flex-row sm:items-center">
+            <div className="group relative flex-1">
+              <div className="absolute inset-0 rounded-full bg-devo-500/10 opacity-0 blur-2xl transition-opacity group-focus-within:opacity-100" />
               <div className="relative">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-devo-400" />
+                <Search className="absolute left-6 top-1/2 h-5 w-5 -translate-y-1/2 text-devo-400" />
                 <input
                   type="text"
                   placeholder="Search across wisdom library..."
-                  className="w-full pl-14 pr-6 py-4 sm:py-5 bg-white border-2 border-slate-100 rounded-[2rem] font-bold text-sm sm:text-base shadow-xl focus:border-devo-500 outline-none transition-all placeholder:text-slate-300"
+                  className="w-full rounded-[2rem] border-2 border-white bg-white/90 py-4 pl-14 pr-6 text-sm font-bold shadow-xl outline-none transition-all placeholder:text-slate-300 focus:border-devo-500 sm:py-5 sm:text-base"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 {isSearching && (
                   <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                    <Loader2 className="w-5 h-5 animate-spin text-devo-500" />
+                    <Loader2 className="h-5 w-5 animate-spin text-devo-500" />
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Action Group */}
             <div className="flex items-center gap-3">
-              {/* Favorites Shortcut */}
               <button
                 onClick={() => router.push(`${pathname}?tab=favorites`)}
-                className="flex-1 sm:flex-none h-[52px] sm:h-[60px] px-6 flex items-center justify-center gap-2.5 bg-white border-2 border-red-50 hover:border-red-100 rounded-[2rem] font-black text-[10px] uppercase tracking-widest text-red-500 shadow-xl transition-all hover:scale-[1.02] hover:bg-red-50/30 active:scale-95 whitespace-nowrap group"
+                className="group flex h-[52px] flex-1 items-center justify-center gap-2.5 whitespace-nowrap rounded-[2rem] border-2 border-white bg-white/85 px-6 text-[10px] font-black uppercase tracking-widest text-red-500 shadow-xl transition-all hover:scale-[1.02] hover:bg-red-50/30 active:scale-95 sm:h-[60px] sm:flex-none"
               >
-                <Heart className="w-4 h-4 fill-red-500 group-hover:scale-125 transition-transform" />
+                <Heart className="h-4 w-4 fill-red-500 transition-transform group-hover:scale-125" />
                 <span>My Favorites</span>
               </button>
 
-              {/* Channel Filter */}
               <div className="relative flex-1 sm:flex-none" ref={filterRef}>
                 <button
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className={`h-[52px] sm:h-[60px] w-full sm:w-auto px-6 flex items-center justify-center gap-3 bg-white border-2 rounded-[2rem] font-black text-[10px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 ${
+                  className={`flex h-[52px] w-full items-center justify-center gap-3 rounded-[2rem] border-2 px-6 text-[10px] font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 sm:h-[60px] sm:w-auto ${
                     selectedChannelIds.length > 0
-                      ? "border-devo-500 text-devo-600 bg-devo-50/50"
-                      : "border-slate-100 text-slate-400"
+                      ? "border-devo-500 bg-devo-50/50 text-devo-600"
+                      : "border-white bg-white/85 text-slate-500"
                   }`}
                 >
-                  <SlidersHorizontal className="w-4 h-4" />
+                  <SlidersHorizontal className="h-4 w-4" />
                   <span>
                     {selectedChannelIds.length === 0
                       ? "All Channels"
                       : `${selectedChannelIds.length} Teachers`}
                   </span>
                   <ChevronDown
-                    className={`w-3 h-3 transition-transform duration-300 ${
+                    className={`h-3 w-3 transition-transform duration-300 ${
                       isFilterOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
 
-                {/* Filter Dropdown */}
                 {isFilterOpen && (
-                  <div className="absolute top-full mt-4 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-slate-100 p-4 z-[100] animate-in fade-in slide-in-from-top-4 duration-300">
-                    <div className="flex items-center justify-between mb-4 px-2">
-                      <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                  <div className="absolute right-0 top-full z-[100] mt-4 w-72 rounded-3xl border border-white bg-white/95 p-4 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="mb-4 flex items-center justify-between px-2">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                         Filter Teachers
                       </span>
                       <div className="flex gap-3">
                         <button
                           onClick={() =>
-                            setSelectedChannelIds(
-                              channels.map((c) => c.channel_id)
-                            )
+                            setSelectedChannelIds(channels.map((c) => c.channel_id))
                           }
-                          className="text-[9px] font-black text-devo-600 hover:text-devo-950 uppercase"
+                          className="text-[9px] font-black uppercase text-devo-600 hover:text-devo-950"
                         >
                           All
                         </button>
                         <button
                           onClick={() => setSelectedChannelIds([])}
-                          className="text-[9px] font-black text-slate-400 hover:text-red-500 uppercase"
+                          className="text-[9px] font-black uppercase text-slate-400 hover:text-red-500"
                         >
                           Clear
                         </button>
                       </div>
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto pr-2 space-y-1 custom-scrollbar">
+                    <div className="custom-scrollbar max-h-80 space-y-1 overflow-y-auto pr-2">
                       {channels.map((ch) => {
                         const isSelected = selectedChannelIds.includes(
-                          ch.channel_id
+                          ch.channel_id,
                         );
+
                         return (
                           <button
                             key={ch.id}
                             onClick={() => {
                               setSelectedChannelIds((prev) =>
                                 isSelected
-                                  ? prev.filter(
-                                      (id) => id !== ch.channel_id
-                                    )
-                                  : [...prev, ch.channel_id]
+                                  ? prev.filter((id) => id !== ch.channel_id)
+                                  : [...prev, ch.channel_id],
                               );
                             }}
-                            className={`w-full flex items-center gap-3 p-2 rounded-xl transition-all ${
+                            className={`flex w-full items-center gap-3 rounded-xl p-2 transition-all ${
                               isSelected
                                 ? "bg-devo-50 text-devo-900"
-                                : "hover:bg-slate-50 text-slate-600"
+                                : "text-slate-600 hover:bg-slate-50"
                             }`}
                           >
-                            {/* Checkbox */}
                             <div
-                              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors shrink-0 ${
+                              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 transition-colors ${
                                 isSelected
-                                  ? "bg-devo-500 border-devo-500"
+                                  ? "border-devo-500 bg-devo-500"
                                   : "border-slate-200"
                               }`}
                             >
-                              {isSelected && (
-                                <Check className="w-3 h-3 text-white" />
-                              )}
+                              {isSelected && <Check className="h-3 w-3 text-white" />}
                             </div>
 
-                            {/* Logo */}
-                            <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-100 bg-slate-100 flex items-center justify-center">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-slate-100">
                               {ch.custom_logo ? (
                                 <Image
                                   src={ch.custom_logo}
@@ -220,11 +209,11 @@ export default function ChannelPickerPage({
                                   unoptimized
                                 />
                               ) : (
-                                <Video className="w-4 h-4 text-slate-300" />
+                                <Video className="h-4 w-4 text-slate-300" />
                               )}
                             </div>
 
-                            <span className="text-[11px] font-bold truncate text-left flex-1">
+                            <span className="flex-1 truncate text-left text-[11px] font-bold">
                               {ch.name}
                             </span>
                           </button>
@@ -238,19 +227,16 @@ export default function ChannelPickerPage({
           </div>
         </div>
 
-        {/* ── Content Area ─────────────────────────────────────────────────── */}
         {searchQuery ? (
-          /* Search Results */
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Results header */}
-            <div className="flex flex-col sm:flex-row items-center justify-between border-b border-slate-200 pb-6 gap-4">
-              <div className="flex flex-col items-center sm:items-start gap-1">
+            <div className="flex flex-col items-center justify-between gap-4 border-b border-slate-200 pb-6 sm:flex-row">
+              <div className="flex flex-col items-center gap-1 sm:items-start">
                 <h2 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">
-                  LECTURE SEARCH RESULTS ({globalResults.length})
+                  Lecture Search Results ({globalResults.length})
                 </h2>
                 {selectedChannelIds.length > 0 && (
-                  <p className="text-[10px] font-bold text-devo-600 uppercase tracking-widest">
-                    Filtering by: {selectedChannelIds.length} Selected Teachers
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-devo-600">
+                    Filtering by: {selectedChannelIds.length} selected teachers
                   </p>
                 )}
               </div>
@@ -259,24 +245,23 @@ export default function ChannelPickerPage({
                   setSearchQuery("");
                   setSelectedChannelIds([]);
                 }}
-                className="px-6 py-2 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg"
+                className="rounded-full bg-slate-900 px-6 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-lg transition-all hover:bg-black"
               >
                 Back to Library
               </button>
             </div>
 
-            {/* Results grid or empty state */}
             {globalResults.length === 0 && !isSearching ? (
               <div className="py-20 text-center">
-                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <X className="w-8 h-8 text-slate-300" />
+                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100">
+                  <X className="h-8 w-8 text-slate-300" />
                 </div>
-                <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
                   No matching lectures found in our library
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {globalResults.map((item, i) => {
                   const isPlaylist = item.type === "playlist";
                   const isLiveItem = item.type === "live";
@@ -287,69 +272,64 @@ export default function ChannelPickerPage({
                       onClick={() => handleSearchResultClick(item)}
                       className="group flex flex-col text-left"
                     >
-                      {/* Thumbnail */}
-                      <div className="relative w-full aspect-video">
-                        {/* Playlist stack effect */}
+                      <div className="relative aspect-video w-full">
                         {isPlaylist && (
                           <>
-                            <div className="absolute -top-1.5 left-0 right-0 h-full bg-slate-200/80 rounded-3xl -z-10 translate-y-1 scale-x-[0.96] border border-slate-300/30" />
-                            <div className="absolute -top-3 left-0 right-0 h-full bg-slate-300/60 rounded-3xl -z-20 translate-y-2 scale-x-[0.92] border border-slate-400/20" />
+                            <div className="absolute -top-1.5 left-0 right-0 -z-10 h-full translate-y-1 scale-x-[0.96] rounded-3xl border border-slate-300/30 bg-slate-200/80" />
+                            <div className="absolute -top-3 left-0 right-0 -z-20 h-full translate-y-2 scale-x-[0.92] rounded-3xl border border-slate-400/20 bg-slate-300/60" />
                           </>
                         )}
 
-                        <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-sm group-hover:shadow-xl group-hover:scale-[1.02] transition-all duration-500 border border-slate-100 bg-slate-200">
+                        <div className="relative h-full w-full overflow-hidden rounded-3xl border border-slate-100 bg-slate-200 shadow-sm transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-xl">
                           <Image
                             src={item.thumbnail}
                             alt={item.title}
                             fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                            className="object-cover transition-transform duration-1000 group-hover:scale-110"
                             unoptimized
                           />
 
-                          {/* Hover overlay */}
-                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-white/20 opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100">
                               {isPlaylist ? (
-                                <Layers className="w-6 h-6 text-white" />
+                                <Layers className="h-6 w-6 text-white" />
                               ) : (
-                                <Play className="w-6 h-6 text-white ml-1" />
+                                <Play className="ml-1 h-6 w-6 text-white" />
                               )}
                             </div>
                           </div>
 
-                          {/* Badges */}
                           <div className="absolute bottom-3 right-3 flex gap-2">
                             {isLiveItem && (
-                              <div className="px-2 py-1 bg-red-600 rounded-lg flex items-center gap-1.5 shadow-lg border border-red-500">
-                                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                                <span className="text-[8px] font-black text-white uppercase tracking-widest">
-                                  LIVE
+                              <div className="flex items-center gap-1.5 rounded-lg border border-red-500 bg-red-600 px-2 py-1 shadow-lg">
+                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                                <span className="text-[8px] font-black uppercase tracking-widest text-white">
+                                  Live
                                 </span>
                               </div>
                             )}
-                            <div className="px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[8px] font-black text-white uppercase tracking-widest border border-white/20 shadow-lg">
+                            <div className="rounded-lg border border-white/20 bg-black/60 px-2 py-1 text-[8px] font-black uppercase tracking-widest text-white shadow-lg backdrop-blur-md">
                               {isPlaylist
-                                ? `${item.playlistCount ?? 0} VIDEOS`
-                                : "LECTURE"}
+                                ? `${item.playlistCount ?? 0} videos`
+                                : "lecture"}
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      {/* Info */}
-                      <div className="pt-4 px-1 space-y-2.5">
-                        <h3 className="font-outfit font-black text-xs sm:text-[13px] text-devo-950 line-clamp-2 leading-snug group-hover:text-devo-600 transition-colors">
+                      <div className="space-y-2.5 px-1 pt-4">
+                        <h3 className="line-clamp-2 font-outfit text-xs font-black leading-snug text-devo-950 transition-colors group-hover:text-devo-600 sm:text-[13px]">
                           {item.title}
                         </h3>
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center shrink-0">
+                          <div className="flex h-5 w-5 items-center justify-center rounded-md bg-slate-100">
                             {isPlaylist ? (
-                              <Layers className="w-3 h-3 text-slate-400" />
+                              <Layers className="h-3 w-3 text-slate-400" />
                             ) : (
-                              <Video className="w-3 h-3 text-slate-400" />
+                              <Video className="h-3 w-3 text-slate-400" />
                             )}
                           </div>
-                          <p className="text-[9px] font-bold text-slate-400 truncate uppercase tracking-widest">
+                          <p className="truncate text-[9px] font-bold uppercase tracking-widest text-slate-400">
                             {item.channelTitle ?? "Devotional Library"}
                           </p>
                         </div>
@@ -361,30 +341,28 @@ export default function ChannelPickerPage({
             )}
           </div>
         ) : !loadingChannels && channels.length === 0 ? (
-          /* No channels assigned — admin must grant access first */
-          <div className="max-w-xl mx-auto text-center py-16 px-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 mb-6">
-              <Video className="w-7 h-7 text-indigo-500" />
+          <div className="mx-auto max-w-xl px-6 py-16 text-center">
+            <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50">
+              <Video className="h-7 w-7 text-indigo-500" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-devo-950 tracking-tight mb-2">
+            <h2 className="mb-2 text-xl font-black tracking-tight text-devo-950 sm:text-2xl">
               No channels yet
             </h2>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              You haven't been assigned any YouTube channels yet. Please contact
+            <p className="text-sm leading-relaxed text-slate-500">
+              You have not been assigned any YouTube channels yet. Please contact
               your ashram admin to get access to the channels approved for your
               seva.
             </p>
           </div>
         ) : (
-          /* Channel Grid */
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-8 gap-x-4 sm:gap-x-6">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {loadingChannels
               ? Array.from({ length: 10 }).map((_, i) => (
                   <div key={i} className="space-y-4 animate-pulse">
-                    <div className="w-full h-[180px] sm:h-[240px] rounded-[2rem] sm:rounded-[3rem] bg-slate-200 border border-slate-100" />
-                    <div className="space-y-2 px-4 flex flex-col items-center">
-                      <div className="h-3 bg-slate-200 rounded-full w-2/3" />
-                      <div className="h-2 bg-slate-100 rounded-full w-1/3" />
+                    <div className="h-[180px] w-full rounded-[2rem] border border-slate-100 bg-slate-200 sm:h-[240px] sm:rounded-[3rem]" />
+                    <div className="flex flex-col items-center space-y-2 px-4">
+                      <div className="h-3 w-2/3 rounded-full bg-slate-200" />
+                      <div className="h-2 w-1/3 rounded-full bg-slate-100" />
                     </div>
                   </div>
                 ))
@@ -395,32 +373,30 @@ export default function ChannelPickerPage({
                     className="group flex flex-col items-center gap-4 animate-in zoom-in duration-700"
                     style={{ animationDelay: `${i * 50}ms` }}
                   >
-                    {/* Card */}
-                    <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] h-auto rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-xl transition-all duration-500 group-hover:shadow-2xl group-hover:scale-[1.05] active:scale-95 border border-slate-100 bg-slate-100">
+                    <div className="relative h-auto w-full aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/80 bg-slate-100 shadow-xl transition-all duration-500 group-hover:scale-[1.05] group-hover:shadow-2xl active:scale-95 sm:aspect-[3/4] sm:rounded-[3rem]">
                       {channel.custom_logo ? (
                         <Image
                           src={channel.custom_logo}
                           alt={channel.name}
                           fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-700"
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
                           unoptimized
                           priority={i < 8}
                           loading={i < 8 ? "eager" : "lazy"}
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-slate-50 flex items-center justify-center">
-                          <Video className="w-12 h-12 text-slate-200" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+                          <Video className="h-12 w-12 text-slate-200" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                     </div>
 
-                    {/* Name */}
-                    <div className="text-center space-y-0.5 px-2">
-                      <h2 className="text-[11px] sm:text-[14px] font-black text-devo-950 leading-tight group-hover:text-devo-600 transition-colors uppercase tracking-tight">
+                    <div className="space-y-0.5 px-2 text-center">
+                      <h2 className="text-[11px] font-black uppercase tracking-tight text-devo-950 transition-colors group-hover:text-devo-600 sm:text-[14px]">
                         {channel.name}
                       </h2>
-                      <p className="text-slate-400 font-bold text-[8px] sm:text-[10px] uppercase tracking-widest">
+                      <p className="text-[8px] font-bold uppercase tracking-widest text-slate-400 sm:text-[10px]">
                         {channel.handle}
                       </p>
                     </div>

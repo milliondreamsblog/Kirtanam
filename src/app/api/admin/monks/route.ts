@@ -34,11 +34,18 @@ export async function GET(request: NextRequest) {
   const ids = profiles.map((p) => p.id);
 
   // Pull channel-access counts + last-activity in parallel.
-  const [{ data: access }, { data: lastActs }] = await Promise.all([
+  const [{ data: access }, { data: accountAccess }, { data: accountChannels }, { data: lastActs }] = await Promise.all([
     supabaseAdmin
       .from("user_channel_access")
-      .select("user_id")
+      .select("user_id, channel_id")
       .in("user_id", ids),
+    supabaseAdmin
+      .from("user_account_access")
+      .select("user_id, account_id")
+      .in("user_id", ids),
+    supabaseAdmin
+      .from("account_channel_access")
+      .select("account_id, channel_id"),
     supabaseAdmin
       .from("user_activity_log")
       .select("user_id, created_at")
@@ -50,6 +57,35 @@ export async function GET(request: NextRequest) {
   const channelCount = new Map<string, number>();
   for (const row of access ?? []) {
     channelCount.set(row.user_id as string, (channelCount.get(row.user_id as string) ?? 0) + 1);
+  }
+
+  const accountCount = new Map<string, number>();
+  const effectiveChannels = new Map<string, Set<string>>();
+  const accountChannelsByAccount = new Map<string, string[]>();
+
+  for (const row of accountChannels ?? []) {
+    const accountId = row.account_id as string;
+    const existing = accountChannelsByAccount.get(accountId) ?? [];
+    existing.push(row.channel_id as string);
+    accountChannelsByAccount.set(accountId, existing);
+  }
+
+  for (const row of access ?? []) {
+    const userId = row.user_id as string;
+    const channels = effectiveChannels.get(userId) ?? new Set<string>();
+    channels.add((row as { channel_id?: string }).channel_id as string);
+    effectiveChannels.set(userId, channels);
+  }
+
+  for (const row of accountAccess ?? []) {
+    const userId = row.user_id as string;
+    const accountId = row.account_id as string;
+    accountCount.set(userId, (accountCount.get(userId) ?? 0) + 1);
+    const channels = effectiveChannels.get(userId) ?? new Set<string>();
+    for (const channelId of accountChannelsByAccount.get(accountId) ?? []) {
+      channels.add(channelId);
+    }
+    effectiveChannels.set(userId, channels);
   }
 
   const lastActive = new Map<string, string>();
@@ -67,6 +103,8 @@ export async function GET(request: NextRequest) {
     role: p.role,
     created_at: p.created_at,
     assigned_channel_count: channelCount.get(p.id) ?? 0,
+    assigned_account_count: accountCount.get(p.id) ?? 0,
+    effective_channel_count: effectiveChannels.get(p.id)?.size ?? channelCount.get(p.id) ?? 0,
     last_active_at: lastActive.get(p.id) ?? null,
   }));
 

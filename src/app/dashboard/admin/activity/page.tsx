@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Filter, RefreshCw } from "lucide-react";
 import { authFetch } from "@/lib/auth-client";
+
+interface EntryMetadata {
+  [key: string]: string | number | boolean | null | undefined;
+}
 
 interface Entry {
   id: number;
@@ -12,7 +16,7 @@ interface Entry {
   channel_id: string | null;
   video_id: string | null;
   query: string | null;
-  metadata: any;
+  metadata: EntryMetadata | null;
   created_at: string;
   user: { email: string; full_name: string | null };
   channel_name: string | null;
@@ -32,7 +36,7 @@ export default function ActivityFeedPage() {
   const [action, setAction] = useState<string>("");
   const [err, setErr] = useState<string | null>(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ limit: "200" });
@@ -41,30 +45,31 @@ export default function ActivityFeedPage() {
       if (!res.ok) throw new Error(await res.text());
       const j = await res.json();
       setEntries(j.entries ?? []);
-    } catch (e: any) {
-      setErr(e.message ?? "Failed to load");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to load";
+      setErr(message);
     } finally {
       setLoading(false);
     }
-  }
+  }, [action]);
 
   useEffect(() => {
     load();
-  }, [action]);
+  }, [load]);
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-5">
       <header className="flex items-center justify-between">
         <div>
           <Link
-            href="/dashboard/admin/monks"
+            href="/dashboard/admin/users"
             className="inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-slate-500"
           >
-            <ArrowLeft className="w-3 h-3" /> Monks
+            <ArrowLeft className="w-3 h-3" /> Users
           </Link>
           <h1 className="text-2xl font-black tracking-tight mt-2">Activity Feed</h1>
           <p className="text-slate-500 text-sm">
-            Everything monks have done recently, newest first.
+            Everything users have done recently, newest first.
           </p>
         </div>
         <button
@@ -118,13 +123,13 @@ export default function ActivityFeedPage() {
                 </span>
                 <div className="flex-1 min-w-0 text-sm">
                   <Link
-                    href={`/dashboard/admin/monks/${e.user_id}`}
+                    href={`/dashboard/admin/users/${e.user_id}`}
                     className="font-bold text-slate-900 hover:underline"
                   >
                     {e.user.full_name ?? e.user.email}
                   </Link>
                   <div className="text-xs text-slate-500 mt-0.5 truncate">
-                    {e.query && <span>searched "{e.query}"</span>}
+                    {e.query && <span>searched &quot;{e.query}&quot;</span>}
                     {e.channel_name && <span>on {e.channel_name}</span>}
                     {e.video_id && <span className="font-mono ml-1">({e.video_id})</span>}
                   </div>
