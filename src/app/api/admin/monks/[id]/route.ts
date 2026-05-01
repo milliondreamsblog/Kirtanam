@@ -100,10 +100,10 @@ export async function GET(
   }
 
   const assignedChannels = (access ?? []).map((r) => ({
+    ...(channelMap.get(r.channel_id as string) ?? { name: "(removed)", handle: null, custom_logo: null, is_active: false }),
     channel_id: r.channel_id,
     granted_at: r.granted_at,
     granted_by: r.granted_by,
-    ...(channelMap.get(r.channel_id as string) ?? { name: "(removed)", handle: null, custom_logo: null, is_active: false }),
   }));
 
   const assignedAccounts = (accountAccess ?? []).map((r) => {
