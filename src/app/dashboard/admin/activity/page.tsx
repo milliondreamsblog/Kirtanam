@@ -153,7 +153,7 @@ function actionColor(action: string): string {
     case "play_video":
       return "bg-emerald-50 text-emerald-700";
     case "search":
-      return "bg-amber-50 text-amber-700";
+      return "bg-[#f5efe3] text-[#5b6a63]";
     case "access_denied":
       return "bg-red-50 text-red-700";
     case "open_external":

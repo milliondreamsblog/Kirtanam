@@ -53,7 +53,7 @@ export default function PortalPage() {
                 <div className="space-y-4">
                   <h1 className="font-display max-w-4xl text-5xl leading-[0.92] text-devo-950 sm:text-6xl lg:text-7xl">
                     Built for
-                    <span className="ml-3 bg-gradient-to-r from-devo-700 via-devo-500 to-amber-500 bg-clip-text text-transparent">
+                    <span className="ml-3 bg-gradient-to-r from-devo-700 via-devo-400 to-[#C9B59A] bg-clip-text text-transparent">
                       daily spiritual work
                     </span>
                   </h1>
@@ -108,7 +108,7 @@ export default function PortalPage() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="py-6 sm:py-12">
+      <main className="pb-12">
         <YouTubeChannelHub />
       </main>
     </div>

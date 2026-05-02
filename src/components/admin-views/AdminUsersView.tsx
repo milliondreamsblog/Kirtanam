@@ -86,7 +86,7 @@ export default function AdminUsersView({
         label: "Video Uploaders",
         count: users.filter((u) => u.role === 2).length,
         icon: Upload,
-        color: "bg-orange-500",
+        color: "bg-[#7A8F78]",
       },
       {
         label: "Managers",

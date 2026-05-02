@@ -28,7 +28,7 @@ export const ROLE_NAMES: Record<number, string> = {
 
 export const ROLE_COLORS: Record<number, string> = {
   1: "bg-red-50 text-red-700 border-red-100",
-  2: "bg-orange-50 text-orange-700 border-orange-100",
+  2: "bg-[#f4f6f3] text-[#3E4A45] border-[#e6ebe2]",
   3: "bg-blue-50 text-blue-700 border-blue-100",
   4: "bg-emerald-50 text-emerald-700 border-emerald-100",
   5: "bg-purple-50 text-purple-700 border-purple-100",

@@ -222,7 +222,7 @@ export default function UserDetailPage() {
       <div className="mt-4 rounded-[1.75rem] border border-black/6 bg-white px-5 py-5 shadow-sm">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-[#fff1ef] text-[#ff4e45]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-[#e6ebe2] text-[#7A8F78]">
               <UserRound className="h-8 w-8" />
             </div>
             <div>
@@ -297,7 +297,7 @@ export default function UserDetailPage() {
                   <button
                     type="button"
                     onClick={() => void revokeAccount(account.account_id)}
-                    className="rounded-xl p-2 text-black/35 hover:bg-[#fff1ef] hover:text-[#ff4e45]"
+                    className="rounded-xl p-2 text-black/35 hover:bg-[#e6ebe2] hover:text-[#7A8F78]"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -317,7 +317,7 @@ export default function UserDetailPage() {
                 value={accountSearch}
                 onChange={(event) => setAccountSearch(event.target.value)}
                 placeholder="Search bundle name"
-                className="w-full rounded-2xl border border-black/8 bg-[#f8f8f8] py-3 pl-10 pr-4 text-sm outline-none focus:border-[#ff4e45]"
+                className="w-full rounded-2xl border border-black/8 bg-[#f8f8f8] py-3 pl-10 pr-4 text-sm outline-none focus:border-[#7A8F78]"
               />
             </div>
           </label>
@@ -328,7 +328,7 @@ export default function UserDetailPage() {
                 key={account.id}
                 type="button"
                 onClick={() => void assignAccounts([account.id])}
-                className="flex items-center gap-3 rounded-2xl border border-black/6 bg-[#fbfbfb] px-4 py-3 text-left transition-all hover:border-[#ff4e45]/20 hover:bg-white"
+                className="flex items-center gap-3 rounded-2xl border border-black/6 bg-[#fbfbfb] px-4 py-3 text-left transition-all hover:border-[#7A8F78]/20 hover:bg-white"
               >
                 <div
                   className="flex h-12 w-12 items-center justify-center rounded-2xl text-white"
@@ -377,13 +377,13 @@ export default function UserDetailPage() {
                       {channel.handle || channel.channel_id}
                     </p>
                   </div>
-                  <div className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#ff4e45]">
+                  <div className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#7A8F78]">
                     Direct
                   </div>
                   <button
                     type="button"
                     onClick={() => void revokeDirectChannel(channel.channel_id)}
-                    className="rounded-xl p-2 text-black/35 hover:bg-[#fff1ef] hover:text-[#ff4e45]"
+                    className="rounded-xl p-2 text-black/35 hover:bg-[#e6ebe2] hover:text-[#7A8F78]"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -403,7 +403,7 @@ export default function UserDetailPage() {
                 value={channelSearch}
                 onChange={(event) => setChannelSearch(event.target.value)}
                 placeholder="Search channel library"
-                className="w-full rounded-2xl border border-black/8 bg-[#f8f8f8] py-3 pl-10 pr-4 text-sm outline-none focus:border-[#ff4e45]"
+                className="w-full rounded-2xl border border-black/8 bg-[#f8f8f8] py-3 pl-10 pr-4 text-sm outline-none focus:border-[#7A8F78]"
               />
             </div>
           </label>
@@ -414,7 +414,7 @@ export default function UserDetailPage() {
                 key={channel.channel_id}
                 type="button"
                 onClick={() => void assignDirectChannel([channel.channel_id])}
-                className="flex items-center gap-3 rounded-2xl border border-black/6 bg-[#fbfbfb] px-4 py-3 text-left transition-all hover:border-[#ff4e45]/20 hover:bg-white"
+                className="flex items-center gap-3 rounded-2xl border border-black/6 bg-[#fbfbfb] px-4 py-3 text-left transition-all hover:border-[#7A8F78]/20 hover:bg-white"
               >
                 <ChannelAvatar channel={channel} />
                 <div className="min-w-0 flex-1">
@@ -425,7 +425,7 @@ export default function UserDetailPage() {
                     {channel.handle || channel.channel_id}
                   </p>
                 </div>
-                <div className="rounded-xl bg-[#fff1ef] p-2 text-[#ff4e45]">
+                <div className="rounded-xl bg-[#e6ebe2] p-2 text-[#7A8F78]">
                   <Plus className="h-4 w-4" />
                 </div>
               </button>
@@ -463,7 +463,7 @@ export default function UserDetailPage() {
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {channel.direct && (
-                  <span className="rounded-full bg-[#fff1ef] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#ff4e45]">
+                  <span className="rounded-full bg-[#e6ebe2] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#7A8F78]">
                     Direct
                   </span>
                 )}
@@ -522,7 +522,7 @@ function ChannelAvatar({
   }
 
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff1ef] text-[#ff4e45]">
+    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e6ebe2] text-[#7A8F78]">
       <FolderKanban className="h-5 w-5" />
     </div>
   );

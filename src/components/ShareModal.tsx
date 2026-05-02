@@ -65,7 +65,7 @@ export default function ShareModal({ isOpen, onClose, url, title }: ShareModalPr
         
         {/* Decorative background glow */}
         <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-32 h-32 bg-indigo-500/10 blur-[40px] rounded-full" />
-        <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-32 h-32 bg-orange-500/10 blur-[40px] rounded-full" />
+        <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-32 h-32 bg-[#7A8F78]/10 blur-[40px] rounded-full" />
 
         <div className="relative space-y-6">
           <div className="flex items-center justify-between">

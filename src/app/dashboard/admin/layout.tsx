@@ -7,27 +7,9 @@ import { FolderKanban, Loader2, LogOut, Menu, Users, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const NAV = [
-  {
-    label: "Accounts",
-    href: "/dashboard/admin/accounts",
-    icon: FolderKanban,
-    hint: "Reusable channel bundles",
-  },
-  {
-    label: "Users",
-    href: "/dashboard/admin/users",
-    icon: Users,
-    hint: "Per-user access",
-  },
+  { label: "Accounts", href: "/dashboard/admin/accounts", icon: FolderKanban },
+  { label: "Users", href: "/dashboard/admin/users", icon: Users },
 ];
-
-function BrandMark() {
-  return (
-    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ff4e45] text-sm font-black text-white shadow-[0_10px_24px_-14px_rgba(255,78,69,0.9)]">
-      AC
-    </div>
-  );
-}
 
 export default function AdminDashboardLayout({
   children,
@@ -73,11 +55,8 @@ export default function AdminDashboardLayout({
 
   if (checking) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f8f8f8]">
-        <div className="flex flex-col items-center gap-4">
-          <BrandMark />
-          <Loader2 className="h-5 w-5 animate-spin text-[#ff4e45]" />
-        </div>
+      <div className="flex h-screen items-center justify-center bg-white">
+        <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
       </div>
     );
   }
@@ -85,47 +64,43 @@ export default function AdminDashboardLayout({
   if (!allowed) return null;
 
   return (
-    <div className="flex min-h-screen bg-[#f8f8f8] text-[#161616]">
+    <div className="flex min-h-screen bg-white text-neutral-900">
       {sidebarOpen && (
         <button
           type="button"
+          aria-label="Close sidebar"
           className="fixed inset-0 z-30 bg-black/30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-40 flex h-full w-[276px] flex-col border-r border-black/8 bg-[#f3f3f3] transition-transform duration-200 lg:static ${
+        className={`fixed left-0 top-0 z-40 flex h-full w-56 flex-col border-r border-neutral-200 bg-neutral-50/60 transition-transform duration-150 lg:static ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-black/6 px-5 py-5">
-          <div className="flex items-center gap-3">
-            <BrandMark />
-            <div>
-              <p className="text-xl font-black tracking-tight text-[#ff4e45]">
-                Ashram Admin
-              </p>
-              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-black/45">
-                Content Control
-              </p>
+        <div className="flex items-center justify-between border-b border-neutral-200 px-4 h-12">
+          <Link href="/dashboard/admin/accounts" className="flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#7A8F78] text-[11px] font-semibold text-white">
+              K
             </div>
-          </div>
+            <span className="text-sm font-semibold tracking-tight text-neutral-900">
+              Kritaman
+            </span>
+          </Link>
           <button
             type="button"
-            className="rounded-xl p-2 text-black/45 hover:bg-black/5 lg:hidden"
+            aria-label="Close sidebar"
+            className="rounded-md p-1 text-neutral-500 hover:bg-neutral-200 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <nav className="flex-1 px-3 py-4">
-          <p className="px-4 pb-3 text-[11px] font-black uppercase tracking-[0.26em] text-black/35">
-            Menu
-          </p>
-          <ul className="space-y-1.5">
-            {NAV.map(({ label, href, icon: Icon, hint }) => {
+        <nav className="flex-1 px-2 py-3">
+          <ul className="space-y-0.5">
+            {NAV.map(({ label, href, icon: Icon }) => {
               const active =
                 pathname === href || pathname.startsWith(`${href}/`);
               return (
@@ -133,29 +108,14 @@ export default function AdminDashboardLayout({
                   <Link
                     href={href}
                     onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 rounded-2xl border px-4 py-3 transition-all ${
+                    className={`flex items-center gap-2 rounded-md px-2 h-8 text-[13px] transition-colors ${
                       active
-                        ? "border-[#ff4e45]/30 bg-[#ff4e45] text-white shadow-[0_18px_40px_-24px_rgba(255,78,69,0.9)]"
-                        : "border-transparent bg-transparent text-black/70 hover:bg-white hover:text-black"
+                        ? "bg-neutral-200/70 text-neutral-900 font-medium"
+                        : "text-neutral-600 hover:bg-neutral-200/50 hover:text-neutral-900"
                     }`}
                   >
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                        active ? "bg-white/18" : "bg-white"
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black tracking-tight">{label}</p>
-                      <p
-                        className={`truncate text-[11px] font-medium ${
-                          active ? "text-white/75" : "text-black/45"
-                        }`}
-                      >
-                        {hint}
-                      </p>
-                    </div>
+                    <Icon className="h-4 w-4" />
+                    {label}
                   </Link>
                 </li>
               );
@@ -163,49 +123,46 @@ export default function AdminDashboardLayout({
           </ul>
         </nav>
 
-        <div className="border-t border-black/6 px-4 py-4">
-          <div className="rounded-2xl bg-white px-4 py-4 shadow-sm">
-            <p className="truncate text-sm font-black text-black">
+        <div className="border-t border-neutral-200 px-3 py-3">
+          <div className="mb-2 min-w-0">
+            <p className="truncate text-[13px] font-medium text-neutral-900">
               {userName || "Admin"}
             </p>
-            <p className="mt-1 truncate text-xs font-medium text-black/45">
-              {userEmail}
-            </p>
-            <div className="mt-4 flex items-center justify-between">
-              <Link
-                href="/"
-                className="text-[11px] font-black uppercase tracking-[0.22em] text-black/45 hover:text-black"
-              >
-                Back To App
-              </Link>
-              <button
-                type="button"
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  window.location.href = "/";
-                }}
-                className="inline-flex items-center gap-2 rounded-xl bg-black px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white"
-              >
-                <LogOut className="h-3.5 w-3.5" />
-                Logout
-              </button>
-            </div>
+            <p className="truncate text-[11px] text-neutral-500">{userEmail}</p>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <Link
+              href="/"
+              className="text-[12px] text-neutral-500 hover:text-neutral-900"
+            >
+              ← Back to app
+            </Link>
+            <button
+              type="button"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = "/";
+              }}
+              className="inline-flex items-center gap-1 rounded-md px-2 h-7 text-[12px] text-neutral-600 hover:bg-neutral-200/70 hover:text-neutral-900"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Logout
+            </button>
           </div>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-black/6 bg-[#f8f8f8]/95 px-4 py-3 backdrop-blur md:px-6 lg:hidden">
+        <header className="sticky top-0 z-20 flex items-center gap-2 border-b border-neutral-200 bg-white/95 px-4 h-12 backdrop-blur lg:hidden">
           <button
             type="button"
-            className="rounded-xl bg-white p-2 text-black/70 shadow-sm"
+            aria-label="Open sidebar"
+            className="rounded-md p-1.5 text-neutral-600 hover:bg-neutral-100"
             onClick={() => setSidebarOpen(true)}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-4 w-4" />
           </button>
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-black">
-            {currentLabel}
-          </p>
+          <p className="text-[13px] font-medium text-neutral-900">{currentLabel}</p>
         </header>
 
         <main className="flex-1">{children}</main>

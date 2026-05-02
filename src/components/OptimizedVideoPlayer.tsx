@@ -243,26 +243,24 @@ export default function OptimizedVideoPlayer({
 
       {/* Loading Overlay (Only if not ready AND not timed out) */}
       {!playerReady && !timedOut && videoId && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-900 z-10">
-          <div className="text-center space-y-4">
-            <Loader2 className="w-10 h-10 text-devo-500 animate-spin mx-auto" />
-            <p className="text-white font-bold text-[10px] uppercase tracking-[0.2em] px-4 animate-pulse">
-              Optimizing Connection...
-            </p>
+        <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 z-10">
+          <div className="flex items-center gap-2.5 text-white/70">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <p className="text-[12px] font-medium">Loading…</p>
           </div>
         </div>
       )}
 
       {/* Error State */}
       {error && !timedOut && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 p-8 text-center z-20">
-          <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
-          <p className="text-white font-bold text-sm mb-6">{error}</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900 px-6 text-center z-20">
+          <AlertCircle className="h-5 w-5 text-[#C97064] mb-2.5" />
+          <p className="text-[13px] text-white/80 mb-4 max-w-xs">{error}</p>
           <button
             onClick={() => { setError(null); playerInstance.current?.loadVideoById(videoId); }}
-            className="px-6 py-3 bg-devo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-devo-700 transition-all"
+            className="rounded-md bg-[#7A8F78] px-3 h-8 text-[12px] font-medium text-white hover:bg-[#647a63] transition-colors"
           >
-            Retry Connection
+            Retry
           </button>
         </div>
       )}

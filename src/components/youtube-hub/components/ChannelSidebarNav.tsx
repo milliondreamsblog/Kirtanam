@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { Grid, Video } from "lucide-react";
+import { ArrowLeft, Video } from "lucide-react";
 import type { Channel } from "../types";
 
 interface ChannelSidebarNavProps {
@@ -16,43 +17,30 @@ interface ChannelSidebarNavProps {
 
 // ─── Shared logo renderer ─────────────────────────────────────────────────────
 
-function ChannelLogo({
-  channel,
-  size,
-}: {
-  channel: Channel;
-  size: "sm" | "md";
-}) {
+function ChannelLogo({ channel }: { channel: Channel }) {
   const src = channel.custom_logo || null;
-  const dim = size === "md" ? 56 : 40;
 
   if (src) {
     return (
       <Image
         src={src}
         alt={channel.name}
-        width={dim}
-        height={dim}
-        className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+        width={32}
+        height={32}
+        className="object-cover w-full h-full"
         unoptimized
       />
     );
   }
 
   return (
-    <div className="w-full h-full bg-slate-100 flex items-center justify-center">
-      <Video
-        className={
-          size === "md"
-            ? "w-5 h-5 xl:w-6 xl:h-6 text-slate-300"
-            : "w-4 h-4 text-slate-300"
-        }
-      />
+    <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+      <Video className="h-3.5 w-3.5 text-neutral-400" />
     </div>
   );
 }
 
-// ─── Desktop sidebar ──────────────────────────────────────────────────────────
+// ─── Desktop sidebar — collapses to icons, expands on hover ───────────────────
 
 function DesktopSidebar({
   channels,
@@ -60,45 +48,124 @@ function DesktopSidebar({
   onSelect,
   onBack,
 }: ChannelSidebarNavProps) {
+  const [hovered, setHovered] = useState(false);
+  const expanded = hovered;
+
   return (
-    <aside className="hidden lg:flex w-14 xl:w-20 bg-white border-r border-slate-200 flex-col items-center py-4 xl:py-6 gap-4 xl:gap-6 sticky top-20 h-[calc(100vh-80px)] z-50 shrink-0">
-      {/* Back to library grid */}
-      <button
-        onClick={onBack}
-        title="Back to Spiritual Library"
-        className="p-2.5 bg-slate-900 text-white rounded-xl hover:bg-black transition-all shadow-lg active:scale-95 mb-4 group"
+    <aside
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`hidden lg:flex sticky top-16 h-[calc(100vh-64px)] z-40 shrink-0 flex-col border-r border-neutral-200 transition-[width,box-shadow] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        expanded
+          ? "w-60 bg-white shadow-[8px_0_24px_-12px_rgba(62,74,69,0.15)]"
+          : "w-14 bg-white"
+      }`}
+    >
+      {/* Back to library */}
+      <div className="border-b border-neutral-100 px-2 py-2">
+        <button
+          onClick={onBack}
+          title="Back to library"
+          className={`group flex items-center gap-2.5 rounded-md text-[13px] text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors w-full ${
+            expanded ? "px-2 h-9" : "h-9 justify-center"
+          }`}
+        >
+          <ArrowLeft className="h-4 w-4 flex-shrink-0 transition-transform duration-300 group-hover:-translate-x-0.5" />
+          <span
+            className={`whitespace-nowrap transition-all duration-300 ease-out ${
+              expanded
+                ? "opacity-100 translate-x-0 max-w-[160px]"
+                : "opacity-0 -translate-x-1 max-w-0 overflow-hidden"
+            }`}
+          >
+            Library
+          </span>
+        </button>
+      </div>
+
+      {/* Channel list */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar py-2 px-2">
+        <p
+          className={`px-2 text-[11px] font-medium text-neutral-500 transition-all duration-300 ease-out ${
+            expanded
+              ? "mb-1 opacity-100 max-h-5"
+              : "mb-0 opacity-0 max-h-0 overflow-hidden"
+          }`}
+        >
+          Channels
+        </p>
+        <ul className="space-y-0.5">
+          {channels.map((channel, idx) => {
+            const isActive = channel.channel_id === activeChannelId;
+            // Stagger the label reveal slightly per row when expanding
+            const labelDelayMs = expanded ? Math.min(idx * 18, 220) : 0;
+
+            return (
+              <li key={channel.id}>
+                <button
+                  onClick={() => onSelect(channel.channel_id)}
+                  title={channel.name}
+                  className={`group relative flex w-full items-center gap-2.5 rounded-md transition-colors duration-200 ${
+                    expanded ? "px-2 h-10" : "h-10 justify-center"
+                  } ${
+                    isActive
+                      ? "bg-[#e6ebe2] text-[#3E4A45]"
+                      : "text-neutral-700 hover:bg-neutral-50"
+                  }`}
+                >
+                  {/* Active indicator strip */}
+                  <span
+                    className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 rounded-r-full bg-[#7A8F78] transition-all duration-300 ${
+                      isActive
+                        ? "h-5 opacity-100 scale-y-100"
+                        : "h-0 opacity-0 scale-y-50"
+                    }`}
+                  />
+
+                  {/* Avatar */}
+                  <div
+                    className={`h-7 w-7 flex-shrink-0 overflow-hidden rounded-md ring-1 ring-black/5 transition-transform duration-300 ${
+                      isActive ? "scale-105" : "group-hover:scale-105"
+                    }`}
+                  >
+                    <ChannelLogo channel={channel} />
+                  </div>
+
+                  {/* Label — fade + slide in, staggered */}
+                  <span
+                    className={`min-w-0 flex-1 truncate text-left text-[13px] transition-all ease-out ${
+                      expanded
+                        ? "opacity-100 translate-x-0 max-w-[180px]"
+                        : "opacity-0 -translate-x-1 max-w-0 overflow-hidden"
+                    } ${isActive ? "font-medium" : ""}`}
+                    style={{
+                      transitionDuration: expanded ? "320ms" : "150ms",
+                      transitionDelay: `${labelDelayMs}ms`,
+                    }}
+                  >
+                    {channel.name}
+                  </span>
+
+                  {/* Tooltip (collapsed mode only) */}
+                  {!expanded && (
+                    <span className="absolute left-full ml-2 px-2 h-7 flex items-center bg-[#3E4A45] text-white text-[12px] font-medium rounded-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50 shadow-md">
+                      {channel.name}
+                    </span>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {/* Subtle hint at bottom: hover-to-expand affordance */}
+      <div
+        className={`border-t border-neutral-100 px-3 py-2 transition-opacity duration-200 ${
+          expanded ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
       >
-        <Grid className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-      </button>
-
-      {/* Channel icon list */}
-      <div className="flex flex-col items-center gap-3 xl:gap-5 flex-grow overflow-y-auto w-full custom-scrollbar pb-6 px-1">
-        {channels.map((channel) => {
-          const isActive = channel.channel_id === activeChannelId;
-
-          return (
-            <button
-              key={channel.id}
-              onClick={() => onSelect(channel.channel_id)}
-              title={channel.name}
-              className={`relative group p-1.5 rounded-2xl transition-all duration-300 ${
-                isActive
-                  ? "ring-2 ring-devo-500 ring-offset-4 bg-slate-100"
-                  : "hover:bg-slate-50"
-              }`}
-            >
-              {/* Icon */}
-              <div className="w-10 h-10 xl:w-14 xl:h-14 rounded-lg xl:rounded-xl overflow-hidden shadow-md border-2 border-white bg-slate-200 flex items-center justify-center">
-                <ChannelLogo channel={channel} size="md" />
-              </div>
-
-              {/* Tooltip */}
-              <span className="absolute left-full ml-4 px-3 py-1.5 bg-devo-950 text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-xl">
-                {channel.name}
-              </span>
-            </button>
-          );
-        })}
+        <p className="text-[10px] text-neutral-400 text-center">›</p>
       </div>
     </aside>
   );
@@ -112,8 +179,8 @@ function MobileTopBar({
   onSelect,
 }: Omit<ChannelSidebarNavProps, "onBack">) {
   return (
-    <div className="lg:hidden relative z-[60] bg-white border-b border-slate-200 px-4 py-4 shadow-sm">
-      <div className="flex gap-4 overflow-x-auto no-scrollbar pb-1">
+    <div className="lg:hidden relative z-[60] bg-white border-b border-neutral-200 px-3 py-2.5">
+      <div className="flex gap-3 overflow-x-auto no-scrollbar">
         {channels.map((channel) => {
           const isActive = channel.channel_id === activeChannelId;
 
@@ -121,23 +188,22 @@ function MobileTopBar({
             <button
               key={channel.id}
               onClick={() => onSelect(channel.channel_id)}
-              className={`flex-shrink-0 flex flex-col items-center gap-1.5 transition-all duration-300 ${
-                isActive ? "scale-105" : "opacity-60"
-              }`}
+              className="flex-shrink-0 flex flex-col items-center gap-1.5 transition-opacity"
             >
-              {/* Icon */}
               <div
-                className={`w-14 h-14 rounded-2xl overflow-hidden border-2 shadow-sm ${
+                className={`h-11 w-11 rounded-lg overflow-hidden ring-1 transition-all ${
                   isActive
-                    ? "border-devo-500 ring-2 ring-devo-100"
-                    : "border-white"
+                    ? "ring-[#7A8F78] ring-2"
+                    : "ring-black/5 opacity-70"
                 }`}
               >
-                <ChannelLogo channel={channel} size="md" />
+                <ChannelLogo channel={channel} />
               </div>
-
-              {/* First word of channel name */}
-              <span className="text-[9px] font-black uppercase tracking-tighter text-slate-600 truncate max-w-[60px]">
+              <span
+                className={`text-[10px] truncate max-w-[64px] ${
+                  isActive ? "text-[#3E4A45] font-medium" : "text-neutral-500"
+                }`}
+              >
                 {channel.name.split(" ")[0]}
               </span>
             </button>
@@ -150,11 +216,6 @@ function MobileTopBar({
 
 // ─── Composed export ──────────────────────────────────────────────────────────
 
-/**
- * Renders the channel navigation in two responsive forms:
- *  - Desktop (lg+): sticky vertical icon sidebar on the left edge
- *  - Mobile (<lg): horizontal scrollable icon bar at the top of the page
- */
 export default function ChannelSidebarNav(props: ChannelSidebarNavProps) {
   return (
     <>

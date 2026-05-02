@@ -7,6 +7,7 @@ import {
   Edit3,
   FolderKanban,
   Globe,
+  Loader2,
   Plus,
   RefreshCw,
   Save,
@@ -81,7 +82,7 @@ const DEFAULT_ACCOUNT: AccountDraft = {
   slug: "",
   name: "",
   description: "",
-  accent_color: "#ff4e45",
+  accent_color: "#7A8F78",
   is_active: true,
 };
 
@@ -90,7 +91,7 @@ const DEFAULT_CHANNEL: ChannelDraft = {
   name: "",
   handle: "",
   custom_logo: "",
-  banner_style: "linear-gradient(135deg, #ff4e45 0%, #ff7b54 100%)",
+  banner_style: "linear-gradient(135deg, #7A8F78 0%, #3E4A45 100%)",
   is_active: true,
 };
 
@@ -276,6 +277,65 @@ export default function AccountsPage() {
     await Promise.all([loadBase(), loadAccountDetail(selectedAccount.account.id)]);
   };
 
+  // Per-channel sync state. Map<channel_id, "pending" | "ok" | "error">
+  const [syncStatus, setSyncStatus] = useState<
+    Record<string, "pending" | "ok" | "error">
+  >({});
+  const [syncMessage, setSyncMessage] = useState<Record<string, string>>({});
+
+  const syncChannel = async (channelId: string, isIncremental = false) => {
+    setSyncStatus((prev) => ({ ...prev, [channelId]: "pending" }));
+    setSyncMessage((prev) => {
+      const next = { ...prev };
+      delete next[channelId];
+      return next;
+    });
+
+    try {
+      const res = await authFetch("/api/admin/youtube/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ channelId, isIncremental }),
+      });
+
+      const body = (await res.json().catch(() => ({}))) as {
+        totalSynced?: number;
+        error?: string;
+      };
+
+      if (!res.ok) {
+        setSyncStatus((prev) => ({ ...prev, [channelId]: "error" }));
+        setSyncMessage((prev) => ({
+          ...prev,
+          [channelId]: body.error ?? `HTTP ${res.status}`,
+        }));
+        return;
+      }
+
+      setSyncStatus((prev) => ({ ...prev, [channelId]: "ok" }));
+      setSyncMessage((prev) => ({
+        ...prev,
+        [channelId]: `Synced ${body.totalSynced ?? 0} videos`,
+      }));
+
+      // Auto-clear the success label after a few seconds.
+      window.setTimeout(() => {
+        setSyncStatus((prev) => {
+          if (prev[channelId] !== "ok") return prev;
+          const next = { ...prev };
+          delete next[channelId];
+          return next;
+        });
+      }, 4000);
+    } catch (err: unknown) {
+      setSyncStatus((prev) => ({ ...prev, [channelId]: "error" }));
+      setSyncMessage((prev) => ({
+        ...prev,
+        [channelId]: err instanceof Error ? err.message : "Network error",
+      }));
+    }
+  };
+
   const openCreateChannel = () => {
     setChannelDraft(DEFAULT_CHANNEL);
     setChannelModalOpen(true);
@@ -366,309 +426,323 @@ export default function AccountsPage() {
   };
 
   return (
-    <div className="px-4 py-5 md:px-6 lg:px-8">
-      <div className="mb-5 flex flex-col gap-3 rounded-[1.75rem] border border-black/6 bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black/35">
-            Accounts
-          </p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight text-black">
-            Reusable YouTube account bundles
-          </h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black/35" />
+    <div className="flex h-[calc(100vh-0px)] lg:h-screen flex-col bg-white">
+      {/* Top toolbar — page title + search + new */}
+      <div className="flex items-center gap-3 border-b border-neutral-200 px-4 h-12 lg:px-6">
+        <h1 className="text-[14px] font-semibold text-neutral-900">Accounts</h1>
+        <span className="text-[12px] text-neutral-500">
+          {accounts.length} {accounts.length === 1 ? "bundle" : "bundles"}
+        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
             <input
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search account..."
-              className="w-full rounded-2xl border border-black/8 bg-[#f8f8f8] py-3 pl-10 pr-4 text-sm outline-none focus:border-[#ff4e45]"
+              placeholder="Search accounts"
+              className="w-48 sm:w-64 rounded-md border border-neutral-200 bg-white py-1.5 pl-7 pr-2 text-[13px] outline-none focus:border-neutral-400"
             />
           </div>
           <button
             type="button"
-            onClick={openCreateAccount}
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#ff4e45] px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-white"
+            onClick={() => void loadBase()}
+            className="rounded-md p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+            title="Refresh"
           >
-            <Plus className="h-4 w-4" />
-            New Account
+            <RefreshCw className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={openCreateAccount}
+            className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-2.5 h-7 text-[12px] font-medium text-white hover:bg-neutral-800"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            New account
           </button>
         </div>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
-        <section className="rounded-[1.75rem] border border-black/6 bg-white p-3 shadow-sm">
-          <div className="mb-3 flex items-center justify-between px-2">
-            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-black/35">
-              Bundle List
-            </p>
-            <button
-              type="button"
-              onClick={() => void loadBase()}
-              className="rounded-xl p-2 text-black/45 hover:bg-[#f5f5f5] hover:text-black"
-            >
-              <RefreshCw className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="space-y-2">
-            {loading ? (
-              <div className="flex items-center justify-center py-16">
-                <RefreshCw className="h-5 w-5 animate-spin text-[#ff4e45]" />
-              </div>
-            ) : filteredAccounts.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-black/10 bg-[#fafafa] px-4 py-12 text-center">
-                <FolderKanban className="mx-auto h-8 w-8 text-black/25" />
-                <p className="mt-3 text-sm font-bold text-black/55">
-                  No accounts yet
-                </p>
-              </div>
-            ) : (
-              filteredAccounts.map((account) => {
+      {/* Two-pane layout */}
+      <div className="flex flex-1 min-h-0">
+        {/* Left: account list */}
+        <aside className="w-72 flex-shrink-0 border-r border-neutral-200 overflow-y-auto">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <RefreshCw className="h-4 w-4 animate-spin text-neutral-400" />
+            </div>
+          ) : filteredAccounts.length === 0 ? (
+            <div className="px-4 py-12 text-center text-[13px] text-neutral-500">
+              No accounts yet.
+            </div>
+          ) : (
+            <ul>
+              {filteredAccounts.map((account) => {
                 const active = selectedAccountId === account.id;
                 return (
-                  <button
-                    key={account.id}
-                    type="button"
-                    onClick={() => setSelectedAccountId(account.id)}
-                    className={`w-full rounded-2xl border px-4 py-4 text-left transition-all ${
-                      active
-                        ? "border-[#ff4e45]/25 bg-[#ff4e45] text-white shadow-[0_22px_40px_-28px_rgba(255,78,69,0.85)]"
-                        : "border-black/6 bg-[#fbfbfb] text-black hover:border-black/10 hover:bg-white"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-black tracking-tight">
+                  <li key={account.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAccountId(account.id)}
+                      className={`flex w-full items-center gap-2 px-4 py-2 text-left border-l-2 transition-colors ${
+                        active
+                          ? "border-[#7A8F78] bg-neutral-50"
+                          : "border-transparent hover:bg-neutral-50"
+                      }`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[13px] font-medium text-neutral-900">
                           {account.name}
                         </p>
-                        <p
-                          className={`mt-1 truncate text-[11px] font-medium ${
-                            active ? "text-white/75" : "text-black/45"
-                          }`}
-                        >
+                        <p className="truncate text-[11px] text-neutral-500">
                           {account.description || account.slug}
                         </p>
                       </div>
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${
-                          active ? "bg-white/18 text-white" : "bg-white text-black/55"
-                        }`}
-                      >
-                        {account.channel_count}
-                      </span>
-                    </div>
-                    <div
-                      className={`mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] ${
-                        active ? "text-white/75" : "text-black/40"
-                      }`}
-                    >
-                      <span>{account.user_count} users</span>
-                      <span>•</span>
-                      <span>{account.is_active ? "Active" : "Hidden"}</span>
-                    </div>
-                  </button>
+                      <div className="flex flex-shrink-0 items-center gap-2 text-[11px] text-neutral-500">
+                        <span>{account.channel_count}ch</span>
+                        <span>·</span>
+                        <span>{account.user_count}u</span>
+                      </div>
+                    </button>
+                  </li>
                 );
-              })
-            )}
-          </div>
-        </section>
+              })}
+            </ul>
+          )}
+        </aside>
 
-        <section className="rounded-[1.75rem] border border-black/6 bg-white p-4 shadow-sm md:p-5">
+        {/* Right: detail */}
+        <section className="flex-1 min-w-0 overflow-y-auto">
           {!selectedAccountId ? (
-            <div className="flex min-h-[500px] flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-black/10 bg-[#fafafa] text-center">
-              <FolderKanban className="h-10 w-10 text-black/20" />
-              <p className="mt-4 text-lg font-black text-black/55">
-                Select an account
-              </p>
+            <div className="flex h-full items-center justify-center text-[13px] text-neutral-500">
+              Select an account from the list
             </div>
           ) : loadingDetail || !selectedAccount ? (
-            <div className="flex min-h-[500px] items-center justify-center">
-              <RefreshCw className="h-5 w-5 animate-spin text-[#ff4e45]" />
+            <div className="flex h-full items-center justify-center">
+              <RefreshCw className="h-4 w-4 animate-spin text-neutral-400" />
             </div>
           ) : (
-            <div className="space-y-5">
-              <div
-                className="rounded-[1.6rem] border px-5 py-5 text-white"
-                style={{
-                  background: `linear-gradient(135deg, ${selectedAccount.account.accent_color}, #111111)`,
-                  borderColor: `${selectedAccount.account.accent_color}33`,
-                }}
-              >
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div className="space-y-2">
-                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-white/70">
-                      Account Bundle
-                    </p>
-                    <h2 className="text-3xl font-black tracking-tight">
+            <div>
+              {/* Detail header */}
+              <div className="flex items-start justify-between gap-3 border-b border-neutral-200 px-6 py-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-2 w-2 rounded-full flex-shrink-0"
+                      style={{ background: selectedAccount.account.accent_color }}
+                    />
+                    <h2 className="truncate text-[16px] font-semibold text-neutral-900">
                       {selectedAccount.account.name}
                     </h2>
-                    <p className="max-w-2xl text-sm leading-6 text-white/80">
-                      {selectedAccount.account.description ||
-                        "Reusable account bundle for users with the same study profile."}
+                    <span
+                      className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                        selectedAccount.account.is_active
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-neutral-100 text-neutral-500"
+                      }`}
+                    >
+                      {selectedAccount.account.is_active ? "Active" : "Hidden"}
+                    </span>
+                  </div>
+                  {selectedAccount.account.description && (
+                    <p className="mt-1 text-[12px] text-neutral-500 line-clamp-1">
+                      {selectedAccount.account.description}
                     </p>
-                    <div className="flex flex-wrap gap-2 pt-2 text-[11px] font-black uppercase tracking-[0.18em] text-white/75">
-                      <span className="rounded-full border border-white/18 px-3 py-1">
-                        {selectedAccount.channels.length} channels
-                      </span>
-                      <span className="rounded-full border border-white/18 px-3 py-1">
-                        {selectedAccount.users.length} linked users
-                      </span>
-                      <span className="rounded-full border border-white/18 px-3 py-1">
-                        {selectedAccount.account.is_active ? "Active" : "Hidden"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={openEditAccount}
-                      className="inline-flex items-center gap-2 rounded-2xl bg-white/14 px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-white"
-                    >
-                      <Edit3 className="h-4 w-4" />
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={deleteAccount}
-                      className="inline-flex items-center gap-2 rounded-2xl bg-black/20 px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-white"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </button>
-                  </div>
+                  )}
+                  <p className="mt-1 text-[11px] text-neutral-400">
+                    {selectedAccount.channels.length} channels ·{" "}
+                    {selectedAccount.users.length} users · /
+                    {selectedAccount.account.slug}
+                  </p>
+                </div>
+                <div className="flex flex-shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={openEditAccount}
+                    className="inline-flex items-center gap-1 rounded-md border border-neutral-200 px-2 h-7 text-[12px] text-neutral-700 hover:bg-neutral-50"
+                  >
+                    <Edit3 className="h-3.5 w-3.5" />
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={deleteAccount}
+                    className="inline-flex items-center gap-1 rounded-md border border-neutral-200 px-2 h-7 text-[12px] text-neutral-700 hover:bg-red-50 hover:border-red-200 hover:text-red-700"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
 
-              <div className="grid gap-5 2xl:grid-cols-[1.05fr_0.95fr]">
-                <div className="space-y-4 rounded-[1.5rem] border border-black/6 bg-[#fbfbfb] p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[11px] font-black uppercase tracking-[0.22em] text-black/35">
-                        Channels Inside This Account
-                      </p>
-                      <p className="mt-1 text-sm text-black/55">
-                        These become available to every linked user.
-                      </p>
-                    </div>
+              {/* Sections */}
+              <div className="grid gap-px bg-neutral-200 lg:grid-cols-2">
+                {/* Attached channels */}
+                <div className="bg-white">
+                  <div className="flex items-center justify-between border-b border-neutral-200 px-6 h-10">
+                    <p className="text-[12px] font-medium text-neutral-700">
+                      Attached channels ({selectedAccount.channels.length})
+                    </p>
                     <button
                       type="button"
                       onClick={openCreateChannel}
-                      className="inline-flex items-center gap-2 rounded-2xl border border-black/8 bg-white px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-black"
+                      className="inline-flex items-center gap-1 rounded-md px-2 h-6 text-[11px] text-neutral-700 hover:bg-neutral-100"
                     >
-                      <Plus className="h-4 w-4" />
-                      New Channel
+                      <Plus className="h-3 w-3" />
+                      New channel
                     </button>
                   </div>
+                  {selectedAccount.channels.length === 0 ? (
+                    <p className="px-6 py-6 text-[12px] text-neutral-500">
+                      No channels attached.
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-neutral-100">
+                      {selectedAccount.channels.map((channel) => {
+                        const status = syncStatus[channel.channel_id];
+                        const message = syncMessage[channel.channel_id];
+                        const isPending = status === "pending";
+                        return (
+                          <li
+                            key={channel.channel_id}
+                            className="group flex items-center gap-2.5 px-6 h-11 hover:bg-neutral-50"
+                          >
+                            <ChannelAvatar channel={channel} />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-[13px] font-medium text-neutral-900">
+                                {channel.name}
+                              </p>
+                              <p className="truncate text-[11px] text-neutral-500">
+                                {message ? (
+                                  <span
+                                    className={
+                                      status === "error"
+                                        ? "text-[#C97064]"
+                                        : status === "ok"
+                                          ? "text-[#7A8F78]"
+                                          : "text-neutral-500"
+                                    }
+                                  >
+                                    {message}
+                                  </span>
+                                ) : (
+                                  channel.handle || channel.channel_id
+                                )}
+                              </p>
+                            </div>
 
-                  <div className="grid gap-3">
-                    {selectedAccount.channels.length === 0 ? (
-                      <div className="rounded-2xl border border-dashed border-black/10 bg-white px-4 py-10 text-center text-sm font-medium text-black/45">
-                        No channels attached yet.
-                      </div>
-                    ) : (
-                      selectedAccount.channels.map((channel) => (
-                        <div
-                          key={channel.channel_id}
-                          className="flex items-center gap-3 rounded-2xl border border-black/6 bg-white px-4 py-3"
-                        >
-                          <ChannelAvatar channel={channel} />
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-black text-black">
-                              {channel.name}
-                            </p>
-                            <p className="truncate text-[11px] text-black/45">
-                              {channel.handle || channel.channel_id}
-                            </p>
-                          </div>
+                            {/* Sync button */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void syncChannel(channel.channel_id, false)
+                              }
+                              disabled={isPending}
+                              className={`flex items-center gap-1 rounded-md px-2 h-7 text-[11px] font-medium transition-colors ${
+                                isPending
+                                  ? "text-neutral-400 cursor-not-allowed"
+                                  : "text-[#3E4A45] opacity-0 group-hover:opacity-100 hover:bg-[#e6ebe2]"
+                              }`}
+                              title="Pull latest videos from YouTube"
+                            >
+                              {isPending ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                  Syncing
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="h-3 w-3" />
+                                  Sync
+                                </>
+                              )}
+                            </button>
+
+                            {/* Remove button */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void removeChannel(channel.channel_id)
+                              }
+                              className="rounded-md p-1 text-neutral-400 opacity-0 hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+                              title="Remove"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+
+                {/* Available library */}
+                <div className="bg-white">
+                  <div className="flex items-center border-b border-neutral-200 px-6 h-10">
+                    <p className="text-[12px] font-medium text-neutral-700">
+                      Library ({availableChannels.length})
+                    </p>
+                  </div>
+                  {availableChannels.length === 0 ? (
+                    <p className="px-6 py-6 text-[12px] text-neutral-500">
+                      Everything in the library is attached.
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-neutral-100">
+                      {availableChannels.map((channel) => (
+                        <li key={channel.channel_id}>
                           <button
                             type="button"
-                            onClick={() => void removeChannel(channel.channel_id)}
-                            className="rounded-xl p-2 text-black/35 hover:bg-[#fff1ef] hover:text-[#ff4e45]"
+                            onClick={() => void attachChannels([channel.channel_id])}
+                            className="flex w-full items-center gap-2.5 px-6 h-11 text-left hover:bg-neutral-50"
                           >
-                            <X className="h-4 w-4" />
+                            <ChannelAvatar channel={channel} />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-[13px] font-medium text-neutral-900">
+                                {channel.name}
+                              </p>
+                              <p className="truncate text-[11px] text-neutral-500">
+                                {channel.handle || channel.channel_id}
+                              </p>
+                            </div>
+                            <Plus className="h-3.5 w-3.5 text-neutral-400" />
                           </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              {/* Linked users */}
+              <div className="border-t border-neutral-200 bg-white">
+                <div className="flex items-center border-b border-neutral-200 px-6 h-10">
+                  <p className="text-[12px] font-medium text-neutral-700">
+                    Linked users ({selectedAccount.users.length})
+                  </p>
+                </div>
+                {selectedAccount.users.length === 0 ? (
+                  <p className="px-6 py-6 text-[12px] text-neutral-500">
+                    No users linked.
+                  </p>
+                ) : (
+                  <ul className="divide-y divide-neutral-100">
+                    {selectedAccount.users.map((user) => (
+                      <li
+                        key={user.id}
+                        className="flex items-center gap-3 px-6 h-10"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[13px] text-neutral-900">
+                            {user.full_name || user.email}
+                          </p>
                         </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-4 rounded-[1.5rem] border border-black/6 bg-[#fbfbfb] p-4">
-                  <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-black/35">
-                      Channel Library
-                    </p>
-                    <p className="mt-1 text-sm text-black/55">
-                      Reuse channels already in the database.
-                    </p>
-                  </div>
-
-                  <div className="grid gap-3">
-                    {availableChannels.length === 0 ? (
-                      <div className="rounded-2xl border border-dashed border-black/10 bg-white px-4 py-10 text-center text-sm font-medium text-black/45">
-                        Everything in the library is already attached.
-                      </div>
-                    ) : (
-                      availableChannels.map((channel) => (
-                        <button
-                          key={channel.channel_id}
-                          type="button"
-                          onClick={() => void attachChannels([channel.channel_id])}
-                          className="flex items-center gap-3 rounded-2xl border border-black/6 bg-white px-4 py-3 text-left transition-all hover:border-[#ff4e45]/20 hover:bg-[#fff7f6]"
-                        >
-                          <ChannelAvatar channel={channel} />
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-black text-black">
-                              {channel.name}
-                            </p>
-                            <p className="truncate text-[11px] text-black/45">
-                              {channel.handle || channel.channel_id}
-                            </p>
-                          </div>
-                          <div className="rounded-xl bg-[#fff1ef] p-2 text-[#ff4e45]">
-                            <Plus className="h-4 w-4" />
-                          </div>
-                        </button>
-                      ))
-                    )}
-                  </div>
-
-                  <div className="rounded-2xl border border-black/6 bg-white px-4 py-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-black/35">
-                      Linked Users
-                    </p>
-                    <div className="mt-3 space-y-2">
-                      {selectedAccount.users.length === 0 ? (
-                        <p className="text-sm text-black/45">
-                          No users linked yet.
+                        <p className="truncate text-[11px] text-neutral-500">
+                          {user.temple || user.email}
                         </p>
-                      ) : (
-                        selectedAccount.users.slice(0, 6).map((user) => (
-                          <div
-                            key={user.id}
-                            className="flex items-center justify-between rounded-xl bg-[#f8f8f8] px-3 py-2"
-                          >
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-bold text-black">
-                                {user.full_name || user.email}
-                              </p>
-                              <p className="truncate text-[11px] text-black/45">
-                                {user.temple || user.email}
-                              </p>
-                            </div>
-                            <div className="rounded-full bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-black/45">
-                              Linked
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           )}
@@ -676,26 +750,21 @@ export default function AccountsPage() {
       </div>
 
       {accountModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
-          <div className="w-full max-w-xl rounded-[1.75rem] bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-black/6 px-6 py-5">
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-black/35">
-                  Account
-                </p>
-                <h2 className="mt-1 text-xl font-black text-black">
-                  {accountDraft.id ? "Edit account" : "Create account"}
-                </h2>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-neutral-200 px-4 h-11">
+              <h2 className="text-[14px] font-semibold text-neutral-900">
+                {accountDraft.id ? "Edit account" : "New account"}
+              </h2>
               <button
                 type="button"
                 onClick={() => setAccountModalOpen(false)}
-                className="rounded-xl p-2 text-black/35 hover:bg-[#f5f5f5]"
+                className="rounded p-1 text-neutral-500 hover:bg-neutral-100"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="grid gap-4 px-6 py-6">
+            <div className="grid gap-3 px-4 py-4">
               <LabeledInput
                 label="Account Name"
                 value={accountDraft.name}
@@ -730,17 +799,17 @@ export default function AccountsPage() {
                 }
                 placeholder="Reusable study bundle for engineering students."
               />
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <LabeledInput
-                  label="Accent Color"
+                  label="Accent color"
                   value={accountDraft.accent_color}
                   onChange={(value) =>
                     setAccountDraft((prev) => ({ ...prev, accent_color: value }))
                   }
-                  placeholder="#ff4e45"
+                  placeholder="#7A8F78"
                 />
-                <label className="grid gap-2">
-                  <span className="text-[11px] font-black uppercase tracking-[0.18em] text-black/35">
+                <label className="grid gap-1">
+                  <span className="text-[11px] font-medium text-neutral-600">
                     Status
                   </span>
                   <button
@@ -751,10 +820,10 @@ export default function AccountsPage() {
                         is_active: !prev.is_active,
                       }))
                     }
-                    className={`rounded-2xl border px-4 py-3 text-left text-sm font-bold ${
+                    className={`rounded-md border px-2.5 h-8 text-left text-[13px] ${
                       accountDraft.is_active
-                        ? "border-[#ff4e45]/20 bg-[#fff1ef] text-[#ff4e45]"
-                        : "border-black/8 bg-[#f8f8f8] text-black/55"
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        : "border-neutral-200 bg-neutral-50 text-neutral-500"
                     }`}
                   >
                     {accountDraft.is_active ? "Active" : "Hidden"}
@@ -762,21 +831,21 @@ export default function AccountsPage() {
                 </label>
               </div>
             </div>
-            <div className="flex justify-end gap-3 border-t border-black/6 px-6 py-5">
+            <div className="flex justify-end gap-2 border-t border-neutral-200 px-4 h-12 items-center">
               <button
                 type="button"
                 onClick={() => setAccountModalOpen(false)}
-                className="rounded-2xl border border-black/8 px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-black/55"
+                className="rounded-md border border-neutral-200 px-2.5 h-7 text-[12px] text-neutral-700 hover:bg-neutral-50"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => void saveAccount()}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#ff4e45] px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-white"
+                className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-2.5 h-7 text-[12px] font-medium text-white hover:bg-neutral-800"
               >
-                <Save className="h-4 w-4" />
-                Save Account
+                <Save className="h-3.5 w-3.5" />
+                Save
               </button>
             </div>
           </div>
@@ -784,31 +853,26 @@ export default function AccountsPage() {
       )}
 
       {channelModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
-          <div className="w-full max-w-xl rounded-[1.75rem] bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-black/6 px-6 py-5">
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-black/35">
-                  Channel
-                </p>
-                <h2 className="mt-1 text-xl font-black text-black">
-                  Add YouTube channel
-                </h2>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-neutral-200 px-4 h-11">
+              <h2 className="text-[14px] font-semibold text-neutral-900">
+                Add YouTube channel
+              </h2>
               <button
                 type="button"
                 onClick={() => setChannelModalOpen(false)}
-                className="rounded-xl p-2 text-black/35 hover:bg-[#f5f5f5]"
+                className="rounded p-1 text-neutral-500 hover:bg-neutral-100"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="grid gap-4 px-6 py-6">
-              <label className="grid gap-2">
-                <span className="text-[11px] font-black uppercase tracking-[0.18em] text-black/35">
+            <div className="grid gap-3 px-4 py-4">
+              <label className="grid gap-1">
+                <span className="text-[11px] font-medium text-neutral-600">
                   Channel ID
                 </span>
-                <div className="flex gap-2">
+                <div className="flex gap-1.5">
                   <input
                     type="text"
                     value={channelDraft.channel_id || ""}
@@ -819,21 +883,21 @@ export default function AccountsPage() {
                       }))
                     }
                     placeholder="UC..."
-                    className="flex-1 rounded-2xl border border-black/8 bg-[#f8f8f8] px-4 py-3 text-sm outline-none focus:border-[#ff4e45]"
+                    className="flex-1 rounded-md border border-neutral-200 bg-white px-2.5 h-8 text-[13px] outline-none focus:border-neutral-400"
                   />
                   <button
                     type="button"
                     onClick={() => void handleFetchYoutube()}
                     disabled={!channelDraft.channel_id || fetchingYoutube}
-                    className="rounded-2xl bg-black px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-white disabled:opacity-40"
+                    className="rounded-md border border-neutral-200 px-2.5 h-8 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-40"
                   >
-                    {fetchingYoutube ? "Loading" : "Fetch"}
+                    {fetchingYoutube ? "Loading…" : "Fetch"}
                   </button>
                 </div>
               </label>
 
               <LabeledInput
-                label="Display Name"
+                label="Display name"
                 value={channelDraft.name || ""}
                 onChange={(value) =>
                   setChannelDraft((prev) => ({ ...prev, name: value }))
@@ -850,28 +914,28 @@ export default function AccountsPage() {
                 placeholder="EngineeringMonk"
               />
 
-              <div className="rounded-2xl border border-black/8 bg-[#f8f8f8] p-4">
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-black/35">
+              <div>
+                <p className="mb-1.5 text-[11px] font-medium text-neutral-600">
                   Logo
                 </p>
-                <div className="mt-3 flex items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-50">
                     {channelDraft.custom_logo ? (
                       <Image
                         src={channelDraft.custom_logo}
                         alt="Channel logo"
-                        width={64}
-                        height={64}
+                        width={40}
+                        height={40}
                         className="h-full w-full object-cover"
                         unoptimized
                       />
                     ) : (
-                      <Globe className="h-7 w-7 text-black/20" />
+                      <Globe className="h-4 w-4 text-neutral-400" />
                     )}
                   </div>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-white px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-black shadow-sm">
-                    <Upload className="h-4 w-4" />
-                    {uploadingLogo ? "Uploading" : "Upload Logo"}
+                  <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-neutral-200 px-2.5 h-8 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50">
+                    <Upload className="h-3.5 w-3.5" />
+                    {uploadingLogo ? "Uploading…" : "Upload"}
                     <input
                       type="file"
                       className="hidden"
@@ -882,21 +946,21 @@ export default function AccountsPage() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 border-t border-black/6 px-6 py-5">
+            <div className="flex justify-end gap-2 border-t border-neutral-200 px-4 h-12 items-center">
               <button
                 type="button"
                 onClick={() => setChannelModalOpen(false)}
-                className="rounded-2xl border border-black/8 px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-black/55"
+                className="rounded-md border border-neutral-200 px-2.5 h-7 text-[12px] text-neutral-700 hover:bg-neutral-50"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => void saveChannel()}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#ff4e45] px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-white"
+                className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-2.5 h-7 text-[12px] font-medium text-white hover:bg-neutral-800"
               >
-                <Check className="h-4 w-4" />
-                Save Channel
+                <Check className="h-3.5 w-3.5" />
+                Save
               </button>
             </div>
           </div>
@@ -912,17 +976,17 @@ function ChannelAvatar({ channel }: { channel: Channel }) {
       <Image
         src={channel.custom_logo}
         alt={channel.name}
-        width={48}
-        height={48}
-        className="h-12 w-12 rounded-2xl object-cover"
+        width={28}
+        height={28}
+        className="h-7 w-7 rounded object-cover flex-shrink-0"
         unoptimized
       />
     );
   }
 
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff1ef] text-[#ff4e45]">
-      <FolderKanban className="h-5 w-5" />
+    <div className="flex h-7 w-7 items-center justify-center rounded bg-neutral-100 text-neutral-500 flex-shrink-0">
+      <FolderKanban className="h-3.5 w-3.5" />
     </div>
   );
 }
@@ -939,16 +1003,14 @@ function LabeledInput({
   placeholder: string;
 }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-[11px] font-black uppercase tracking-[0.18em] text-black/35">
-        {label}
-      </span>
+    <label className="grid gap-1">
+      <span className="text-[11px] font-medium text-neutral-600">{label}</span>
       <input
         type="text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="rounded-2xl border border-black/8 bg-[#f8f8f8] px-4 py-3 text-sm outline-none focus:border-[#ff4e45]"
+        className="rounded-md border border-neutral-200 bg-white px-2.5 h-8 text-[13px] outline-none focus:border-neutral-400"
       />
     </label>
   );
@@ -966,16 +1028,14 @@ function LabeledTextarea({
   placeholder: string;
 }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-[11px] font-black uppercase tracking-[0.18em] text-black/35">
-        {label}
-      </span>
+    <label className="grid gap-1">
+      <span className="text-[11px] font-medium text-neutral-600">{label}</span>
       <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        rows={4}
-        className="rounded-2xl border border-black/8 bg-[#f8f8f8] px-4 py-3 text-sm outline-none focus:border-[#ff4e45]"
+        rows={3}
+        className="rounded-md border border-neutral-200 bg-white px-2.5 py-1.5 text-[13px] outline-none focus:border-neutral-400 resize-y"
       />
     </label>
   );

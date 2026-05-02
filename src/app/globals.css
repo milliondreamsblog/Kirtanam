@@ -5,23 +5,35 @@
   --font-display: var(--font-display), "Cormorant Garamond", serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  --color-devo-50: #fff8f0;
-  --color-devo-100: #ffeedb;
-  --color-devo-200: #ffd6ad;
-  --color-devo-300: #ffbc7a;
-  --color-devo-400: #ff9d42;
-  --color-devo-500: #f97316;
-  --color-devo-600: #ea580c;
-  --color-devo-700: #c2410c;
-  --color-devo-800: #9a3412;
-  --color-devo-900: #7c2d12;
-  --color-devo-950: #431407;
+  /* Kritaman palette — grounded, gentle, restorative.
+     See /design.md for role mapping. */
+  --color-pine: #3E4A45;
+  --color-sage: #7A8F78;
+  --color-mist: #B9C7B1;
+  --color-sand: #C9B59A;
+  --color-linen: #EEE6DA;
+  --color-terracotta: #C97064;
 
-  --color-accent-gold: #fbbf24;
-  --color-accent-maroon: #831843;
-  --color-background-warm: #fcf9f2;
-  --color-paper: #fffaf3;
-  --color-ink-soft: #5f4a37;
+  /* Legacy `devo-*` scale rebound to the sage spectrum so existing
+     components migrate automatically. New code should prefer the
+     named tokens above. */
+  --color-devo-50:  #f4f6f3;
+  --color-devo-100: #e6ebe2;
+  --color-devo-200: #B9C7B1;
+  --color-devo-300: #9bae97;
+  --color-devo-400: #7A8F78;
+  --color-devo-500: #647a63;
+  --color-devo-600: #50654f;
+  --color-devo-700: #3E4A45;
+  --color-devo-800: #2f3a35;
+  --color-devo-900: #232b27;
+  --color-devo-950: #161b18;
+
+  --color-accent-gold: #C9B59A;
+  --color-accent-maroon: #5b6a63;
+  --color-background-warm: #EEE6DA;
+  --color-paper: #f5efe3;
+  --color-ink-soft: #3E4A45;
 }
 
 @layer base {
@@ -31,12 +43,12 @@
 
   html,
   body {
-    background-color: var(--color-background-warm);
+    background-color: var(--color-linen);
     background-image:
-      radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.12) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(12, 64%, 45%, 0.08) 0px, transparent 45%);
+      radial-gradient(at 0% 0%, rgba(122, 143, 120, 0.10) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(201, 181, 154, 0.10) 0px, transparent 45%);
     background-attachment: fixed;
-    color: var(--color-devo-950);
+    color: var(--color-pine);
     @apply min-h-screen antialiased text-slate-800;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -66,8 +78,8 @@
   }
 
   ::selection {
-    background: rgba(234, 88, 12, 0.18);
-    color: var(--color-devo-950);
+    background: rgba(122, 143, 120, 0.22);
+    color: var(--color-pine);
   }
 }
 
@@ -77,32 +89,80 @@
   }
 
   .glass-panel {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 250, 243, 0.72));
-    border: 1px solid rgba(124, 45, 18, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(238, 230, 218, 0.66));
+    border: 1px solid rgba(62, 74, 69, 0.10);
     box-shadow:
-      0 30px 80px -30px rgba(91, 47, 16, 0.24),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      0 30px 80px -30px rgba(62, 74, 69, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(22px);
   }
 
   .paper-panel {
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 248, 238, 0.94)),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(238, 230, 218, 0.92)),
       repeating-linear-gradient(
         0deg,
-        rgba(124, 45, 18, 0.02),
-        rgba(124, 45, 18, 0.02) 1px,
+        rgba(62, 74, 69, 0.02),
+        rgba(62, 74, 69, 0.02) 1px,
         transparent 1px,
         transparent 28px
       );
-    border: 1px solid rgba(124, 45, 18, 0.08);
-    box-shadow: 0 24px 70px -34px rgba(68, 30, 8, 0.28);
+    border: 1px solid rgba(62, 74, 69, 0.10);
+    box-shadow: 0 24px 70px -34px rgba(62, 74, 69, 0.22);
   }
 
   .ornate-ring {
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, 0.6),
-      0 0 0 10px rgba(255, 248, 238, 0.42);
+      0 0 0 10px rgba(238, 230, 218, 0.5);
+  }
+
+  /* Royal scroll banner ─ unfurl animation */
+  @keyframes scrollUnfurl {
+    0%   { transform: scaleY(0.02); opacity: 0.4; }
+    35%  { transform: scaleY(0.18); opacity: 0.8; }
+    100% { transform: scaleY(1);    opacity: 1; }
+  }
+  @keyframes scrollContentReveal {
+    0%, 65% { opacity: 0; transform: translateY(8px); }
+    100%    { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollBackdropFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes goldShimmer {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(251,191,36,0.45)); }
+    50%      { filter: drop-shadow(0 0 14px rgba(251,191,36,0.85)); }
+  }
+  .royal-parchment {
+    background:
+      radial-gradient(ellipse at top, rgba(245, 239, 227, 0.98), rgba(238, 230, 218, 0.96) 60%, rgba(201, 181, 154, 0.95) 100%),
+      repeating-linear-gradient(
+        45deg,
+        rgba(62, 74, 69, 0.02) 0px,
+        rgba(62, 74, 69, 0.02) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+    box-shadow:
+      inset 0 0 60px rgba(62, 74, 69, 0.10),
+      inset 0 0 0 1px rgba(62, 74, 69, 0.16),
+      0 30px 90px -20px rgba(0, 0, 0, 0.55);
+  }
+  .royal-dowel {
+    background:
+      linear-gradient(180deg, #232b27 0%, #3E4A45 18%, #647a63 50%, #3E4A45 82%, #161b18 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(185, 199, 177, 0.4),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+      0 8px 20px -6px rgba(0, 0, 0, 0.55);
+  }
+  .royal-dowel-cap {
+    background: radial-gradient(circle at 35% 35%, #EEE6DA, #C9B59A 55%, #8a7758);
+    box-shadow:
+      inset 0 0 0 2px rgba(238, 230, 218, 0.5),
+      0 4px 10px rgba(0, 0, 0, 0.45);
   }
 
   .text-balance {

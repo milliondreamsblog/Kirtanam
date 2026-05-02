@@ -705,8 +705,8 @@ export default function AdminPanel() {
       <div className="max-w-xl mx-auto mt-20 px-4">
         <div className="bg-white/80 backdrop-blur-2xl p-10 rounded-[2rem] sm:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(249,115,22,0.15)] border border-white ring-1 ring-slate-200 space-y-8 animate-in zoom-in duration-300">
            <div className="text-center">
-             <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-100">
-               <UserPlus className="w-10 h-10 text-orange-600" />
+             <div className="w-20 h-20 bg-gradient-to-br from-[#e6ebe2] to-[#B9C7B1] rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#e6ebe2]">
+               <UserPlus className="w-10 h-10 text-[#647a63]" />
              </div>
              <h2 className="text-3xl font-outfit font-black text-slate-900 tracking-tight">Finish Registration</h2>
              <p className="text-slate-400 mt-2 font-medium">Please provide your details to access the dashboard</p>
@@ -718,15 +718,15 @@ export default function AdminPanel() {
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2 font-outfit">Full Name</label>
-                  <input type="text" required placeholder="Srinivasa Ramanujan" value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full px-8 py-5 bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl focus:border-orange-400 focus:ring-4 focus:ring-orange-50 outline-none transition-all font-bold text-lg text-slate-800 placeholder:text-slate-200 hover:border-slate-300" />
+                  <input type="text" required placeholder="Srinivasa Ramanujan" value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full px-8 py-5 bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl focus:border-[#9bae97] focus:ring-4 focus:ring-[#f4f6f3] outline-none transition-all font-bold text-lg text-slate-800 placeholder:text-slate-200 hover:border-slate-300" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2 font-outfit">Mobile Number</label>
-                  <input type="tel" required placeholder="+91 98765 43210" value={regMobile} onChange={(e) => setRegMobile(e.target.value)} className="w-full px-8 py-5 bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl focus:border-orange-400 focus:ring-4 focus:ring-orange-50 outline-none transition-all font-bold text-lg text-slate-800 placeholder:text-slate-200 hover:border-slate-300" />
+                  <input type="tel" required placeholder="+91 98765 43210" value={regMobile} onChange={(e) => setRegMobile(e.target.value)} className="w-full px-8 py-5 bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl focus:border-[#9bae97] focus:ring-4 focus:ring-[#f4f6f3] outline-none transition-all font-bold text-lg text-slate-800 placeholder:text-slate-200 hover:border-slate-300" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2 font-outfit">Temple/Center</label>
-                  <input type="text" required placeholder="NVCC Pune / Akurdi Center" value={regTemple} onChange={(e) => setRegTemple(e.target.value)} className="w-full px-8 py-5 bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl focus:border-orange-400 focus:ring-4 focus:ring-orange-50 outline-none transition-all font-bold text-lg text-slate-800 placeholder:text-slate-200 hover:border-slate-300" />
+                  <input type="text" required placeholder="NVCC Pune / Akurdi Center" value={regTemple} onChange={(e) => setRegTemple(e.target.value)} className="w-full px-8 py-5 bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl focus:border-[#9bae97] focus:ring-4 focus:ring-[#f4f6f3] outline-none transition-all font-bold text-lg text-slate-800 placeholder:text-slate-200 hover:border-slate-300" />
                 </div>
                 <div className="space-y-2 grayscale opacity-40">
                   <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2 font-outfit">Email (Verified)</label>
@@ -734,7 +734,7 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <button disabled={isSubmitting} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-extrabold py-6 rounded-2xl transition-all shadow-xl shadow-orange-100 active:scale-[0.98] disabled:opacity-70 flex justify-center items-center gap-3 text-xl tracking-tight">
+              <button disabled={isSubmitting} className="w-full bg-gradient-to-r from-[#7A8F78] to-[#647a63] hover:from-[#647a63] hover:to-[#3E4A45] text-white font-extrabold py-6 rounded-2xl transition-all shadow-xl shadow-[#e6ebe2] active:scale-[0.98] disabled:opacity-70 flex justify-center items-center gap-3 text-xl tracking-tight">
                 {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Complete My Registration"}
               </button>
            </form>
@@ -751,7 +751,7 @@ export default function AdminPanel() {
         {activeView === "home" && (
           <div className="space-y-10 animate-in fade-in zoom-in-95 duration-500">
             <div className="text-center space-y-1">
-              <h1 className="text-2xl sm:text-5xl font-outfit font-black text-devo-950 tracking-tight leading-tight">System <span className="text-transparent bg-clip-text bg-gradient-to-r from-devo-600 to-orange-500">Workspace</span></h1>
+              <h1 className="text-2xl sm:text-5xl font-outfit font-black text-devo-950 tracking-tight leading-tight">System <span className="text-transparent bg-clip-text bg-gradient-to-r from-devo-600 to-[#7A8F78]">Workspace</span></h1>
               <p className="text-slate-400 font-bold text-[10px] sm:text-base uppercase tracking-[0.2em]">Platform Resource Manager</p>
             </div>
 
@@ -760,10 +760,10 @@ export default function AdminPanel() {
               {canUploadVideos && (
                 <button 
                   onClick={() => navigateToView("bc-class")}
-                  className="group relative bg-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border-2 border-slate-200 hover:border-orange-500 shadow-xl hover:shadow-2xl transition-all duration-300 text-left overflow-hidden h-auto sm:h-[260px] flex sm:block items-center gap-4 sm:gap-0"
+                  className="group relative bg-white p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] border-2 border-slate-200 hover:border-[#7A8F78] shadow-xl hover:shadow-2xl transition-all duration-300 text-left overflow-hidden h-auto sm:h-[260px] flex sm:block items-center gap-4 sm:gap-0"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500 hidden sm:block" />
-                  <div className="relative z-10 w-12 h-12 sm:w-16 sm:h-16 bg-orange-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-200 group-hover:rotate-6 transition-transform shrink-0">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#f4f6f3] rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500 hidden sm:block" />
+                  <div className="relative z-10 w-12 h-12 sm:w-16 sm:h-16 bg-[#7A8F78] rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-[#B9C7B1] group-hover:rotate-6 transition-transform shrink-0">
                     <FileVideo className="w-6 h-6 sm:w-8 sm:h-8" />
                   </div>
                   <div className="relative z-10 sm:mt-4 flex-1 min-w-0">
@@ -771,7 +771,7 @@ export default function AdminPanel() {
                       <h3 className="text-lg sm:text-2xl font-black text-devo-950 uppercase tracking-tight sm:normal-case">BC Class</h3>
                       <p className="text-slate-500 font-medium text-[10px] sm:text-sm mt-0.5 sm:mt-1 leading-relaxed line-clamp-1 sm:line-clamp-none">Publish Single or Bulk YouTube lectures and manage the entire video repository.</p>
                     </div>
-                    <div className="flex items-center gap-2 text-orange-600 font-black text-[10px] uppercase tracking-widest mt-1 sm:mt-4">
+                    <div className="flex items-center gap-2 text-[#647a63] font-black text-[10px] uppercase tracking-widest mt-1 sm:mt-4">
                       Enter <ArrowRight className="w-3 h-3 group-hover:translate-x-2 transition-transform" />
                     </div>
                   </div>
@@ -946,13 +946,13 @@ export default function AdminPanel() {
               <div className="flex p-1 bg-white rounded-2xl shadow-sm border border-slate-100">
                 <button 
                   onClick={() => setUploadMode('single')}
-                  className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${uploadMode === 'single' ? 'bg-orange-500 text-white shadow-lg' : 'text-slate-500'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${uploadMode === 'single' ? 'bg-[#7A8F78] text-white shadow-lg' : 'text-slate-500'}`}
                 >
                   Single Upload
                 </button>
                 <button 
                   onClick={() => setUploadMode('bulk')}
-                  className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${uploadMode === 'bulk' ? 'bg-orange-500 text-white shadow-lg' : 'text-slate-500'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${uploadMode === 'bulk' ? 'bg-[#7A8F78] text-white shadow-lg' : 'text-slate-500'}`}
                 >
                   Bulk Import
                 </button>
@@ -964,7 +964,7 @@ export default function AdminPanel() {
               <div className="lg:col-span-1 space-y-6">
                 <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl border border-slate-300">
                   <h2 className="text-2xl font-outfit font-black text-devo-950 mb-6 flex items-center gap-3">
-                    <CloudUpload className="w-6 h-6 text-orange-500" /> Upload Work
+                    <CloudUpload className="w-6 h-6 text-[#7A8F78]" /> Upload Work
                   </h2>
 
                   {submitMessage && (
@@ -979,19 +979,19 @@ export default function AdminPanel() {
                       <div className="space-y-4">
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">YouTube Link</label>
-                          <input type="url" required placeholder="https://..." value={link} onChange={(e) => setLink(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-orange-400 outline-none transition-all font-bold" />
+                          <input type="url" required placeholder="https://..." value={link} onChange={(e) => setLink(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-[#9bae97] outline-none transition-all font-bold" />
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Speech Title</label>
-                          <input type="text" required placeholder="Subject of lecture" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-orange-400 outline-none transition-all font-bold" />
+                          <input type="text" required placeholder="Subject of lecture" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-[#9bae97] outline-none transition-all font-bold" />
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Speaker</label>
-                          <input type="text" required placeholder="Name" value={speaker} onChange={(e) => setSpeaker(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-orange-400 outline-none transition-all font-bold" />
+                          <input type="text" required placeholder="Name" value={speaker} onChange={(e) => setSpeaker(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-[#9bae97] outline-none transition-all font-bold" />
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Recording Date</label>
-                          <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-orange-400 outline-none transition-all font-bold" />
+                          <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-[#9bae97] outline-none transition-all font-bold" />
                         </div>
                       </div>
                     ) : (
@@ -999,21 +999,21 @@ export default function AdminPanel() {
                         <div className="grid grid-cols-2 gap-3">
                           <div className="relative group">
                             <input type="file" accept=".xlsx,.csv" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                            <div className="h-24 bg-orange-50 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center text-center p-2 group-hover:bg-white group-hover:border-orange-400 transition-all">
-                              <FileSpreadsheet className="w-6 h-6 text-orange-500" />
-                              <p className="text-[10px] font-black uppercase text-orange-600 mt-1">Upload File</p>
+                            <div className="h-24 bg-[#f4f6f3] border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center text-center p-2 group-hover:bg-white group-hover:border-[#9bae97] transition-all">
+                              <FileSpreadsheet className="w-6 h-6 text-[#7A8F78]" />
+                              <p className="text-[10px] font-black uppercase text-[#647a63] mt-1">Upload File</p>
                             </div>
                           </div>
-                          <button type="button" onClick={downloadSampleCSV} className="h-24 bg-slate-50 border-2 border-slate-300 rounded-2xl flex flex-col items-center justify-center text-center p-2 hover:bg-white hover:border-orange-500 transition-all shadow-sm">
+                          <button type="button" onClick={downloadSampleCSV} className="h-24 bg-slate-50 border-2 border-slate-300 rounded-2xl flex flex-col items-center justify-center text-center p-2 hover:bg-white hover:border-[#7A8F78] transition-all shadow-sm">
                             <Download className="w-6 h-6 text-slate-400" />
                             <p className="text-[10px] font-black uppercase text-slate-500 mt-1">Template</p>
                           </button>
                         </div>
-                        <textarea rows={6} placeholder="Link | Title | Speaker | Date" value={bulkData} onChange={(e) => setBulkData(e.target.value)} className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-300 rounded-[2rem] focus:bg-white focus:border-orange-400 font-mono text-xs" />
+                        <textarea rows={6} placeholder="Link | Title | Speaker | Date" value={bulkData} onChange={(e) => setBulkData(e.target.value)} className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-300 rounded-[2rem] focus:bg-white focus:border-[#9bae97] font-mono text-xs" />
                       </div>
                     )}
 
-                    <button disabled={isSubmitting} className="w-full bg-orange-500 hover:bg-black py-4 rounded-2xl text-white font-black text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95 disabled:opacity-50">
+                    <button disabled={isSubmitting} className="w-full bg-[#7A8F78] hover:bg-black py-4 rounded-2xl text-white font-black text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95 disabled:opacity-50">
                       {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : "Publish to Library"}
                     </button>
                   </form>
@@ -1035,7 +1035,7 @@ export default function AdminPanel() {
                           placeholder="Search records..." 
                           value={lectureSearch}
                           onChange={(e) => setLectureSearch(e.target.value)}
-                          className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl focus:bg-white focus:border-orange-400 outline-none transition-all text-sm font-bold"
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl focus:bg-white focus:border-[#9bae97] outline-none transition-all text-sm font-bold"
                         />
                       </div>
                       <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
@@ -1149,7 +1149,7 @@ export default function AdminPanel() {
                       ) : paginatedLectures.length === 0 ? (
                         <div className="col-span-full py-20 text-center font-bold text-slate-300">No lectures found</div>
                       ) : paginatedLectures.map(l => (
-                        <div key={`grid-${l.id}`} className="flex flex-col gap-3 p-4 bg-white border-2 border-slate-300 rounded-2xl shadow-sm relative group hover:border-orange-400 focus-within:border-orange-400 transition-all">
+                        <div key={`grid-${l.id}`} className="flex flex-col gap-3 p-4 bg-white border-2 border-slate-300 rounded-2xl shadow-sm relative group hover:border-[#9bae97] focus-within:border-[#9bae97] transition-all">
                            <div className="w-full aspect-video rounded-xl overflow-hidden bg-slate-100 relative shadow-sm border-2 border-slate-300">
                               {getCleanId(l.youtube_id) ? (
                                 <Image 
@@ -1172,7 +1172,7 @@ export default function AdminPanel() {
                           <div className="flex flex-col flex-1 min-w-0">
                              <h3 className="font-black text-devo-950 text-sm sm:text-base leading-snug line-clamp-2">{l.title}</h3>
                              <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-auto pt-3 gap-2">
-                               <span className="text-[10px] sm:text-[11px] font-black text-devo-600 truncate bg-orange-50 border border-orange-100 px-2 py-1 rounded-md inline-block w-fit">{l.speaker_name}</span>
+                               <span className="text-[10px] sm:text-[11px] font-black text-devo-600 truncate bg-[#f4f6f3] border border-[#e6ebe2] px-2 py-1 rounded-md inline-block w-fit">{l.speaker_name}</span>
                                <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">{new Date(l.date).toLocaleDateString()}</span>
                              </div>
                           </div>
@@ -1196,7 +1196,7 @@ export default function AdminPanel() {
                       <select 
                         value={lecturesPerPage}
                         onChange={(e) => { setLecturesPerPage(Number(e.target.value)); setLecturePage(1); }}
-                        className="bg-slate-50 border-2 border-slate-300 rounded-lg px-2 py-1 text-xs font-bold font-outfit focus:bg-white focus:border-orange-400"
+                        className="bg-slate-50 border-2 border-slate-300 rounded-lg px-2 py-1 text-xs font-bold font-outfit focus:bg-white focus:border-[#9bae97]"
                       >
                         {[10, 20, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}
                       </select>
@@ -1207,7 +1207,7 @@ export default function AdminPanel() {
                        <button 
                         disabled={lecturePage === 1}
                         onClick={() => setLecturePage(p => p - 1)}
-                        className="p-3 rounded-2xl bg-white border-2 border-slate-300 text-devo-600 disabled:opacity-30 disabled:pointer-events-none hover:border-orange-400 transition-all shadow-sm"
+                        className="p-3 rounded-2xl bg-white border-2 border-slate-300 text-devo-600 disabled:opacity-30 disabled:pointer-events-none hover:border-[#9bae97] transition-all shadow-sm"
                        >
                         <ChevronLeft className="w-4 h-4" />
                        </button>
@@ -1231,7 +1231,7 @@ export default function AdminPanel() {
                        <button 
                         disabled={lecturePage === totalLecturePages}
                         onClick={() => setLecturePage(p => p + 1)}
-                        className="p-3 rounded-2xl bg-white border-2 border-slate-300 text-devo-600 disabled:opacity-30 disabled:pointer-events-none hover:border-orange-400 transition-all shadow-sm"
+                        className="p-3 rounded-2xl bg-white border-2 border-slate-300 text-devo-600 disabled:opacity-30 disabled:pointer-events-none hover:border-[#9bae97] transition-all shadow-sm"
                        >
                         <ChevronRight className="w-4 h-4" />
                        </button>
@@ -1319,7 +1319,7 @@ export default function AdminPanel() {
                          {/* Sync Status & Timestamp */}
                          <div className="flex flex-wrap items-center gap-2 mt-2">
                             <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border ${
-                              channel.sync_status === 'syncing' || syncingChannels.has(channel.channel_id) ? 'bg-amber-50 border-amber-100 text-amber-600' :
+                              channel.sync_status === 'syncing' || syncingChannels.has(channel.channel_id) ? 'bg-[#f5efe3] border-[#EEE6DA] text-[#8a7758]' :
                               channel.sync_status === 'completed' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' :
                               channel.sync_status === 'error' ? 'bg-rose-50 border-rose-100 text-rose-600' :
                               'bg-slate-50 border-slate-100 text-slate-400'
@@ -1467,7 +1467,7 @@ export default function AdminPanel() {
                   <h3 className="text-3xl sm:text-4xl font-black">{stats?.avgVisitorsPerDay || "0"}</h3>
                 </div>
 
-                <div className="bg-gradient-to-tr from-rose-600 to-orange-500 p-4 sm:p-5 rounded-3xl text-white shadow-lg shadow-rose-100 flex flex-col justify-between h-[130px] sm:h-[150px] relative overflow-hidden group">
+                <div className="bg-gradient-to-tr from-rose-600 to-[#7A8F78] p-4 sm:p-5 rounded-3xl text-white shadow-lg shadow-rose-100 flex flex-col justify-between h-[130px] sm:h-[150px] relative overflow-hidden group">
                   <ArrowRight className="absolute right-[-5px] top-[-5px] w-16 sm:w-20 h-16 sm:h-20 opacity-10 group-hover:scale-110 rotate-[-45deg] transition-transform" strokeWidth={3} />
                   <div className="flex items-center gap-2">
                     <FileVideo className="w-3.5 h-3.5 opacity-70" />

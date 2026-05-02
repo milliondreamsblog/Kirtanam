@@ -6,7 +6,6 @@ import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
-  CalendarDays,
   LogOut,
   MoreHorizontal,
   Settings,
@@ -39,32 +38,6 @@ function HomeIcon({ active }: { active?: boolean }) {
   );
 }
 
-function YoutubeIcon({
-  className,
-  active,
-}: {
-  className?: string;
-  active?: boolean;
-}) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill={active ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={`lucide lucide-youtube ${className ?? ""}`}
-    >
-      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8.14 1 12 1 12s0 3.86.46 5.58a2.78 2.78 0 0 0 1.94 2c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 15.86 23 12 23 12s0-3.86-.46-5.58z" />
-      <polygon
-        points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"
-        fill={active ? "white" : "none"}
-      />
-    </svg>
-  );
-}
-
 export default function Navbar() {
   const pathname = usePathname();
   const [session, setSession] = useState<Session | null>(null);
@@ -72,8 +45,9 @@ export default function Navbar() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showDesktopMore, setShowDesktopMore] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const role = Number(profile?.role);
-  const canOpenAttendance = isBcdb || role === 1 || role === 3;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -89,6 +63,16 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Compact when scrolled — but expand on hover so it never feels stuck.
+  const compact = scrolled && !hovered;
+
   const getInitials = () => {
     if (profile?.full_name) {
       return profile.full_name
@@ -102,80 +86,100 @@ export default function Navbar() {
   };
 
   const isHome = pathname === "/";
-  const isClass = pathname === "/class";
-  const isAttendance = pathname === "/attendance";
 
   return (
     <>
-      <nav className="glass-panel sticky top-4 z-[100] mx-4 hidden h-20 items-center justify-between rounded-[1.75rem] px-6 md:flex lg:mx-6 lg:px-8">
+      <nav
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className={`glass-panel sticky top-0 z-[100] hidden items-center justify-between md:flex transition-[height,padding,border-radius] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          compact
+            ? "mx-0 h-12 rounded-none border-x-0 border-t-0 px-4"
+            : "mx-0 h-16 rounded-none border-x-0 border-t-0 px-6 lg:px-8"
+        }`}
+      >
         <NextLink href="/" className="group flex shrink-0 items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-gradient-to-br from-devo-700 via-devo-500 to-amber-400 text-white shadow-lg transition-all group-hover:scale-105">
-            <span className="font-display text-2xl font-semibold">A</span>
+          <div
+            className={`flex items-center justify-center rounded-[1rem] bg-gradient-to-br from-devo-700 via-devo-400 to-[#C9B59A] text-white shadow-lg transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105 ${
+              compact ? "h-8 w-8" : "h-11 w-11"
+            }`}
+          >
+            <span
+              className={`font-display font-semibold transition-all duration-500 ${
+                compact ? "text-base" : "text-2xl"
+              }`}
+            >
+              K
+            </span>
           </div>
-          <div className="space-y-0.5">
-            <span className="font-display text-3xl font-semibold leading-none text-devo-950">
+          <div
+            className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              compact
+                ? "max-w-[140px] opacity-90"
+                : "max-w-[260px] opacity-100 space-y-0.5"
+            }`}
+          >
+            <span
+              className={`font-display font-semibold leading-none text-devo-950 block transition-all duration-500 ${
+                compact ? "text-lg" : "text-3xl"
+              }`}
+            >
               Kritaman
             </span>
-            <p className="text-[10px] font-black uppercase tracking-[0.26em] text-devo-700/60">
-              Daily spiritual operations
+            <p
+              className={`text-[10px] font-medium tracking-[0.18em] text-[#7A8F78] transition-all duration-300 ${
+                compact ? "max-h-0 opacity-0" : "max-h-5 opacity-100"
+              }`}
+            >
+              hare kṛṣṇa
             </p>
           </div>
         </NextLink>
 
-        <div className="flex items-center gap-4">
+        <div
+          className={`flex items-center transition-[gap] duration-500 ${
+            compact ? "gap-2" : "gap-4"
+          }`}
+        >
           <button
             onClick={() => setShowProfileModal(true)}
-            className="group flex items-center gap-2 rounded-2xl border border-white/80 bg-white/70 px-4 py-2.5 shadow-sm"
+            className={`group flex items-center rounded-2xl border border-white/80 bg-white/70 shadow-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              compact ? "h-8 w-8 justify-center" : "gap-2 px-4 py-2.5"
+            }`}
+            title="My Profile"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-devo-100 text-xs font-black text-devo-700 transition-colors group-hover:bg-devo-600 group-hover:text-white">
+            <div
+              className={`flex items-center justify-center rounded-xl bg-devo-100 font-black text-devo-700 transition-colors group-hover:bg-devo-600 group-hover:text-white ${
+                compact ? "h-6 w-6 text-[10px]" : "h-8 w-8 text-xs"
+              }`}
+            >
               {getInitials()}
             </div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-devo-900">
+            <span
+              className={`overflow-hidden whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-devo-900 transition-all duration-500 ${
+                compact ? "max-w-0 opacity-0" : "max-w-[120px] opacity-100"
+              }`}
+            >
               My Profile
             </span>
           </button>
 
-          <NextLink
-            href="/class"
-            className={`group flex items-center gap-2 rounded-2xl border px-4 py-2.5 shadow-sm ${
-              isClass
-                ? "border-devo-700 bg-devo-700 text-white"
-                : "border-white/80 bg-white/70 text-devo-700 hover:bg-devo-700 hover:text-white"
-            }`}
-          >
-            <YoutubeIcon className="h-5 w-5" active={isClass} />
-            <span className="text-[10px] font-black uppercase tracking-widest">
-              BC Class
-            </span>
-          </NextLink>
-
-          {canOpenAttendance && (
-            <NextLink
-              href="/attendance"
-              className={`group flex items-center gap-2 rounded-2xl border px-4 py-2.5 shadow-sm ${
-                isAttendance
-                  ? "border-devo-950 bg-devo-950 text-white"
-                  : "border-white/80 bg-white/70 text-slate-700 hover:bg-white"
-              }`}
-            >
-              <CalendarDays className="h-5 w-5" />
-              <span className="text-[10px] font-black uppercase tracking-widest">
-                My Attendance
-              </span>
-            </NextLink>
-          )}
-
           <div className="relative">
             <button
               onClick={() => setShowDesktopMore(!showDesktopMore)}
-              className={`flex items-center gap-2 rounded-2xl border px-4 py-2.5 shadow-sm ${
+              className={`flex items-center rounded-2xl border shadow-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 showDesktopMore
                   ? "border-devo-950 bg-devo-950 text-white"
                   : "border-white/80 bg-white/70 text-slate-700 hover:bg-white"
-              }`}
+              } ${compact ? "h-8 w-8 justify-center" : "gap-2 px-4 py-2.5"}`}
+              title="More"
             >
-              <MoreHorizontal className="h-5 w-5" />
-              <span className="text-[10px] font-black uppercase tracking-widest">
+              <MoreHorizontal className={compact ? "h-4 w-4" : "h-5 w-5"} />
+              <span
+                className={`overflow-hidden whitespace-nowrap text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
+                  compact ? "max-w-0 opacity-0" : "max-w-[80px] opacity-100"
+                }`}
+              >
                 More
               </span>
             </button>
@@ -259,9 +263,9 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <nav className="glass-panel relative z-[100] mx-3 mt-3 flex h-16 items-center justify-between rounded-[1.4rem] px-4 md:hidden">
+      <nav className="glass-panel sticky top-0 z-[100] flex h-14 items-center justify-between rounded-none border-x-0 border-t-0 px-4 md:hidden">
         <NextLink href="/" className="group flex shrink-0 items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-devo-700 via-devo-500 to-amber-400 text-white shadow-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-devo-700 via-devo-400 to-[#C9B59A] text-white shadow-sm">
             <span className="font-display text-lg font-semibold">A</span>
           </div>
           <span className="font-display text-2xl font-semibold leading-none text-devo-950">
@@ -308,50 +312,6 @@ export default function Navbar() {
             Home
           </span>
         </NextLink>
-
-        <NextLink
-          href="/class"
-          className="group flex flex-1 flex-col items-center gap-1"
-        >
-          <div
-            className={`rounded-xl p-2 transition-all group-active:scale-95 ${
-              isClass ? "bg-devo-50 text-devo-600 shadow-inner" : "text-slate-400"
-            }`}
-          >
-            <YoutubeIcon className="h-6 w-6" active={isClass} />
-          </div>
-          <span
-            className={`text-[9px] font-black uppercase tracking-widest ${
-              isClass ? "text-devo-600" : "text-slate-400"
-            }`}
-          >
-            BC Class
-          </span>
-        </NextLink>
-
-        {canOpenAttendance && (
-          <NextLink
-            href="/attendance"
-            className="group flex flex-1 flex-col items-center gap-1"
-          >
-            <div
-              className={`rounded-xl p-2 transition-all group-active:scale-95 ${
-                isAttendance
-                  ? "bg-devo-50 text-devo-600 shadow-inner"
-                  : "text-slate-400"
-              }`}
-            >
-              <CalendarDays className="h-6 w-6" />
-            </div>
-            <span
-              className={`text-[9px] font-black uppercase tracking-widest ${
-                isAttendance ? "text-devo-600" : "text-slate-400"
-              }`}
-            >
-              Attendance
-            </span>
-          </NextLink>
-        )}
 
         <button
           onClick={() => setShowMoreMenu(!showMoreMenu)}

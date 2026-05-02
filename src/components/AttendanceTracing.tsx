@@ -127,7 +127,7 @@ export default function AttendanceTracing({
     { color: string; label: string; short: string }
   > = {
     Sick: {
-      color: "text-amber-600 bg-amber-50 border-amber-100",
+      color: "text-[#8a7758] bg-[#f5efe3] border-[#EEE6DA]",
       label: "Sick",
       short: "SK",
     },
@@ -166,12 +166,12 @@ export default function AttendanceTracing({
   const sessionIcons: Record<string, any> = {
     "Mangal Aarti": {
       icon: Clock,
-      color: "text-orange-600",
-      bg: "bg-orange-50",
-      border: "border-orange-100",
-      gradient: "from-orange-500 to-amber-600",
-      shadow: "shadow-orange-200/50",
-      accent: "bg-orange-500",
+      color: "text-[#647a63]",
+      bg: "bg-[#f4f6f3]",
+      border: "border-[#e6ebe2]",
+      gradient: "from-[#7A8F78] to-[#8a7758]",
+      shadow: "shadow-[#B9C7B1]/50",
+      accent: "bg-[#7A8F78]",
     },
     "SB Class": {
       icon: Calendar,
@@ -202,12 +202,12 @@ export default function AttendanceTracing({
     },
     "Afternoon Session": {
       icon: Settings,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-      border: "border-amber-100",
-      gradient: "from-amber-500 to-orange-600",
-      shadow: "shadow-amber-200/50",
-      accent: "bg-amber-500",
+      color: "text-[#8a7758]",
+      bg: "bg-[#f5efe3]",
+      border: "border-[#EEE6DA]",
+      gradient: "from-[#C9B59A] to-[#647a63]",
+      shadow: "shadow-[#C9B59A]/40/50",
+      accent: "bg-[#C9B59A]",
     },
     default: {
       icon: HardDrive,
@@ -886,7 +886,7 @@ export default function AttendanceTracing({
       {/* Dynamic Background Blobs for Visual Depth */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-200/20 rounded-full blur-[120px] animate-pulse pointer-events-none" />
       <div
-        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-100/30 rounded-full blur-[120px] animate-pulse pointer-events-none"
+        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#e6ebe2]/30 rounded-full blur-[120px] animate-pulse pointer-events-none"
         style={{ animationDelay: "2s" }}
       />
       <div className="absolute top-[20%] right-[15%] w-[20%] h-[20%] bg-purple-100/40 rounded-full blur-[100px] pointer-events-none" />
@@ -1260,7 +1260,7 @@ export default function AttendanceTracing({
                                       );
                                     })}
                                     <div
-                                      className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 hover:border-amber-400 focus-within:border-amber-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-100 transition-all shadow-sm"
+                                      className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 hover:border-[#C9B59A] focus-within:border-[#C9B59A] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#EEE6DA] transition-all shadow-sm"
                                       title="Custom minutes"
                                     >
                                       <span className="text-[10px] font-black text-slate-400">
@@ -1281,7 +1281,7 @@ export default function AttendanceTracing({
                                             parseInt(e.target.value) || 0,
                                           )
                                         }
-                                        className="w-8 sm:w-10 bg-transparent border-none text-center font-black text-[11px] sm:text-xs outline-none text-slate-700 tabular-nums p-0 focus:ring-0 focus:text-amber-600 transition-colors [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                        className="w-8 sm:w-10 bg-transparent border-none text-center font-black text-[11px] sm:text-xs outline-none text-slate-700 tabular-nums p-0 focus:ring-0 focus:text-[#8a7758] transition-colors [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                         style={{ MozAppearance: "textfield" }}
                                       />
                                       <span className="text-[10px] font-black text-slate-400">
@@ -1334,8 +1334,8 @@ export default function AttendanceTracing({
                                           P
                                         </div>
                                       ) : row.status === "late" ? (
-                                        <div className="flex items-center gap-1.5 bg-amber-50 text-amber-600 px-3 py-1.5 rounded-lg font-black text-[9px] uppercase border border-amber-100 shadow-sm">
-                                          <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse shadow-[0_0_8px_#f59e0b]" />{" "}
+                                        <div className="flex items-center gap-1.5 bg-[#f5efe3] text-[#8a7758] px-3 py-1.5 rounded-lg font-black text-[9px] uppercase border border-[#EEE6DA] shadow-sm">
+                                          <span className="w-1.5 h-1.5 bg-[#C9B59A] rounded-full animate-pulse shadow-[0_0_8px_#f59e0b]" />{" "}
                                           L
                                         </div>
                                       ) : (
@@ -1395,7 +1395,7 @@ export default function AttendanceTracing({
                               <th className="px-2 sm:px-4 py-4 text-center text-[10px] sm:text-[11px] font-black text-emerald-400 uppercase tracking-widest bg-slate-950 border-r border-white/5 shadow-[inset_0_2px_0_#10b981]">
                                 P
                               </th>
-                              <th className="px-2 sm:px-4 py-4 text-center text-[10px] sm:text-[11px] font-black text-amber-400 uppercase tracking-widest bg-slate-950 border-r border-white/5 shadow-[inset_0_2px_0_#fbbf24]">
+                              <th className="px-2 sm:px-4 py-4 text-center text-[10px] sm:text-[11px] font-black text-[#C9B59A] uppercase tracking-widest bg-slate-950 border-r border-white/5 shadow-[inset_0_2px_0_#fbbf24]">
                                 L
                               </th>
                               <th className="px-2 sm:px-4 py-4 text-center text-[10px] sm:text-[11px] font-black text-rose-400 uppercase tracking-widest bg-slate-950 border-r border-white/5 shadow-[inset_0_2px_0_#f43f5e]">
@@ -1516,7 +1516,7 @@ export default function AttendanceTracing({
                                             className={`w-7 h-7 sm:w-8 sm:h-8 mx-auto rounded-lg flex items-center justify-center font-black text-[10px] sm:text-[11px] transition-all transform hover:scale-110 shadow-sm ${status === "present"
                                               ? "bg-emerald-500 text-white shadow-emerald-200"
                                               : status === "late"
-                                                ? "bg-amber-400 text-white shadow-amber-200"
+                                                ? "bg-[#C9B59A] text-white shadow-[#C9B59A]/40"
                                                 : "bg-rose-400 text-white"
                                               }`}
                                           >
@@ -1576,7 +1576,7 @@ export default function AttendanceTracing({
                                   <td className="px-4 py-2 text-center border-b border-r border-slate-200 bg-emerald-500/5 font-black text-emerald-600 text-xs sm:text-[13px] shadow-[inset_0_-2px_0_#10b98122]">
                                     {pCount}
                                   </td>
-                                  <td className="px-4 py-2 text-center border-b border-r border-slate-200 bg-amber-500/5 font-black text-amber-600 text-xs sm:text-[13px] shadow-[inset_0_-2px_0_#fbbf2422]">
+                                  <td className="px-4 py-2 text-center border-b border-r border-slate-200 bg-[#C9B59A]/5 font-black text-[#8a7758] text-xs sm:text-[13px] shadow-[inset_0_-2px_0_#fbbf2422]">
                                     {lCount}
                                   </td>
                                   <td className="px-4 py-2 text-center border-b border-r border-slate-200 bg-rose-500/5 font-black text-rose-500 text-xs sm:text-[13px] shadow-[inset_0_-2px_0_#f43f5e22]">
@@ -1755,7 +1755,7 @@ export default function AttendanceTracing({
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <label className="text-[9px] font-black text-amber-600/50 uppercase tracking-widest ml-4">
+                            <label className="text-[9px] font-black text-[#8a7758]/50 uppercase tracking-widest ml-4">
                               Late Range
                             </label>
                             <div className="flex flex-col sm:flex-row gap-2">
@@ -2115,7 +2115,7 @@ export default function AttendanceTracing({
                   }: any) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white/95 backdrop-blur-md border border-orange-200 p-4 rounded-2xl shadow-xl shadow-orange-100/50 min-w-[120px]">
+                        <div className="bg-white/95 backdrop-blur-md border border-[#B9C7B1] p-4 rounded-2xl shadow-xl shadow-[#e6ebe2]/50 min-w-[120px]">
                           <p className="text-[11px] font-black text-slate-800 mb-2 uppercase tracking-widest">
                             {label}
                           </p>
@@ -2164,10 +2164,10 @@ export default function AttendanceTracing({
                   return (
                     <>
                       {/* Area Chart: Spiritual Practices Style */}
-                      <div className="lg:col-span-2 bg-gradient-to-br from-orange-50/30 to-white p-6 rounded-[2.5rem] border border-orange-100/50 shadow-sm relative overflow-hidden group">
+                      <div className="lg:col-span-2 bg-gradient-to-br from-[#f4f6f3]/30 to-white p-6 rounded-[2.5rem] border border-[#e6ebe2]/50 shadow-sm relative overflow-hidden group">
                         <div className="flex items-center gap-3 mb-6">
-                          <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                            <Book className="w-5 h-5 text-orange-600" />
+                          <div className="w-10 h-10 bg-[#e6ebe2] rounded-xl flex items-center justify-center">
+                            <Book className="w-5 h-5 text-[#647a63]" />
                           </div>
                           <h4 className="text-xl font-black text-slate-900 tracking-tighter">
                             Practice Trends
@@ -2642,8 +2642,8 @@ export default function AttendanceTracing({
                                     );
                                   } else if (status === "late") {
                                     renderContent = (
-                                      <div className="flex items-center justify-center gap-1.5 font-black text-amber-600 bg-amber-50 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-sm uppercase border border-amber-100 shadow-sm mx-auto w-fit">
-                                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-500 rounded-full animate-pulse shadow-[0_0_8px_#fbbf24]"></span>{" "}
+                                      <div className="flex items-center justify-center gap-1.5 font-black text-[#8a7758] bg-[#f5efe3] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-[11px] sm:text-sm uppercase border border-[#EEE6DA] shadow-sm mx-auto w-fit">
+                                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#C9B59A] rounded-full animate-pulse shadow-[0_0_8px_#fbbf24]"></span>{" "}
                                         {formatRawTime(earliest?.check_time)}
                                       </div>
                                     );
@@ -2764,7 +2764,7 @@ export default function AttendanceTracing({
                                         {t.present}P
                                       </span>
                                       {t.late > 0 && (
-                                        <span className="font-black text-amber-400 text-[8px] sm:text-[11px]">
+                                        <span className="font-black text-[#C9B59A] text-[8px] sm:text-[11px]">
                                           {t.late}L
                                         </span>
                                       )}
@@ -2876,14 +2876,14 @@ function SessionCard({
 
       <div className="space-y-4 pt-4 border-t border-slate-100">
         <h5 className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 mb-2">
-          <Star className="w-3.5 h-3.5 text-amber-400" /> Qualification Windows
+          <Star className="w-3.5 h-3.5 text-[#C9B59A]" /> Qualification Windows
         </h5>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 bg-slate-50 p-3 sm:p-5 rounded-[1.5rem] sm:rounded-[2rem] shadow-inner">
           {[
             { label: "Start P", key: "p_start", color: "text-emerald-600" },
             { label: "End P", key: "p_end", color: "text-emerald-600" },
-            { label: "Start L", key: "l_start", color: "text-amber-600" },
-            { label: "End L", key: "l_end", color: "text-amber-600" },
+            { label: "Start L", key: "l_start", color: "text-[#8a7758]" },
+            { label: "End L", key: "l_end", color: "text-[#8a7758]" },
           ].map((win) => (
             <div key={win.key} className="space-y-1 text-center">
               <label className="text-[7px] sm:text-[8px] font-black text-slate-400 uppercase tracking-widest">
@@ -2914,7 +2914,7 @@ function SessionCard({
           <div className="h-full bg-emerald-500 w-[30%] flex items-center justify-center text-[7px] text-white font-black uppercase tracking-widest rounded-full shadow-lg">
             P
           </div>
-          <div className="h-full bg-amber-500 w-[40%] flex items-center justify-center text-[7px] text-white font-black uppercase tracking-widest mx-0.5 rounded-full shadow-lg">
+          <div className="h-full bg-[#C9B59A] w-[40%] flex items-center justify-center text-[7px] text-white font-black uppercase tracking-widest mx-0.5 rounded-full shadow-lg">
             L
           </div>
           <div className="h-full bg-rose-400 w-[30%] flex items-center justify-center text-[7px] text-white font-black uppercase tracking-widest rounded-full shadow-lg">

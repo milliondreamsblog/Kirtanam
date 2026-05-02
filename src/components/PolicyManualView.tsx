@@ -78,7 +78,7 @@ export default function PolicyManualView({ isEligible, email }: PolicyManualView
   const cardStyles = [
     { bg: "bg-indigo-50/50", border: "border-indigo-100", icon: "text-indigo-600", iconBg: "bg-indigo-100", glow: "bg-indigo-400", hover: "hover:border-indigo-300 hover:shadow-indigo-100" },
     { bg: "bg-emerald-50/50", border: "border-emerald-100", icon: "text-emerald-600", iconBg: "bg-emerald-100", glow: "bg-emerald-400", hover: "hover:border-emerald-300 hover:shadow-emerald-100" },
-    { bg: "bg-amber-50/50", border: "border-amber-100", icon: "text-amber-600", iconBg: "bg-amber-100", glow: "bg-amber-400", hover: "hover:border-amber-300 hover:shadow-amber-100" },
+    { bg: "bg-[#f5efe3]/50", border: "border-[#EEE6DA]", icon: "text-[#8a7758]", iconBg: "bg-[#EEE6DA]", glow: "bg-[#C9B59A]", hover: "hover:border-[#C9B59A]/70 hover:shadow-[#EEE6DA]" },
     { bg: "bg-rose-50/50", border: "border-rose-100", icon: "text-rose-600", iconBg: "bg-rose-100", glow: "bg-rose-400", hover: "hover:border-rose-300 hover:shadow-rose-100" },
     { bg: "bg-violet-50/50", border: "border-violet-100", icon: "text-violet-600", iconBg: "bg-violet-100", glow: "bg-violet-400", hover: "hover:border-violet-300 hover:shadow-violet-100" },
   ];

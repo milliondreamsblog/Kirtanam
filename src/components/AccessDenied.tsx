@@ -12,16 +12,16 @@ export default function AccessDenied() {
         
         {/* Humble Icon Container */}
         <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto">
-          <div className="absolute inset-0 bg-gradient-to-tr from-orange-50 to-orange-100 rounded-[2rem] sm:rounded-[2.5rem] rotate-6 animate-pulse"></div>
-          <div className="relative w-full h-full bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-sm flex items-center justify-center border border-orange-100">
-            <ShieldAlert className="w-10 h-10 sm:w-16 sm:h-16 text-orange-400" strokeWidth={1.5} />
+          <div className="absolute inset-0 bg-gradient-to-tr from-[#f4f6f3] to-[#e6ebe2] rounded-[2rem] sm:rounded-[2.5rem] rotate-6 animate-pulse"></div>
+          <div className="relative w-full h-full bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-sm flex items-center justify-center border border-[#e6ebe2]">
+            <ShieldAlert className="w-10 h-10 sm:w-16 sm:h-16 text-[#9bae97]" strokeWidth={1.5} />
           </div>
         </div>
 
         {/* Humble Messaging */}
         <div className="space-y-3">
           <h1 className="text-2xl sm:text-4xl font-outfit font-black text-slate-900 tracking-tight leading-tight">
-            A Humble <span className="text-orange-500">Restriction</span>
+            A Humble <span className="text-[#7A8F78]">Restriction</span>
           </h1>
           <p className="text-slate-500 font-medium text-sm sm:text-base leading-relaxed px-2">
             We deeply respect your presence in our community. However, this particular sanctuary is currently reserved for administrators. 
@@ -37,7 +37,7 @@ export default function AccessDenied() {
         <div className="pt-4 flex flex-col sm:flex-row gap-4">
           <button 
             onClick={() => router.push("/")}
-            className="flex-[2] flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-extrabold py-5 rounded-2xl transition-all shadow-xl shadow-orange-100 active:scale-[0.98] text-sm sm:text-lg"
+            className="flex-[2] flex items-center justify-center gap-3 bg-gradient-to-r from-[#7A8F78] to-[#647a63] hover:from-[#647a63] hover:to-[#3E4A45] text-white font-extrabold py-5 rounded-2xl transition-all shadow-xl shadow-[#e6ebe2] active:scale-[0.98] text-sm sm:text-lg"
           >
             <Home className="w-5 h-5 sm:w-6 sm:h-6" /> Return to Home
           </button>

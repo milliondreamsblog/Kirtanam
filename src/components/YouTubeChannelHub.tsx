@@ -7,6 +7,7 @@ import ChannelPickerPage from "./youtube-hub/views/ChannelPickerPage";
 import ChannelViewPage from "./youtube-hub/views/ChannelViewPage";
 import ShareModal from "./ShareModal";
 import { useChannels } from "./youtube-hub/hooks/useChannels";
+import { useRecentlyWatched } from "./youtube-hub/hooks/useRecentlyWatched";
 import type { VideoItem, Notification } from "./youtube-hub/types";
 
 /**
@@ -45,6 +46,9 @@ export default function YouTubeChannelHub() {
 
   // ── Channel list (needed to resolve channelId → Channel object) ──────────
   const { channels, isLoading: channelsLoading } = useChannels();
+
+  // ── Recently watched tracker (localStorage-backed) ───────────────────────
+  const { trackPlay } = useRecentlyWatched();
 
   // ── URL-derived state (single source of truth) ───────────────────────────
   const urlChannelId = searchParams.get("channel");
@@ -104,6 +108,10 @@ export default function YouTubeChannelHub() {
     query.set("v", vid.id);
     query.delete("playlist");
     router.push(`${pathname}?${query.toString()}`, { scroll: false });
+
+    // Remember this play in localStorage so the landing page can show it
+    // under "Continue watching" next time the user opens the app.
+    trackPlay(vid);
 
     // Scroll the player into view on selection (mobile-friendly)
     if (playerRef.current) {

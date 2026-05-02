@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       name,
       slug,
       description: body.description?.trim() || null,
-      accent_color: body.accent_color || "#ff4e45",
+      accent_color: body.accent_color || "#7A8F78",
       is_active: body.is_active ?? true,
     })
     .select()

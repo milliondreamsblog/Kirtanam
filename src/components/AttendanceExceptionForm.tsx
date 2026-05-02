@@ -21,7 +21,7 @@ export default function AttendanceExceptionForm({ userEmail, onSuccess }: Attend
   const availableSessions = ["Mangal Aarti", "SB Class", "BC Class", "Hari Nam"];
 
   const exceptionConfigs: Record<string, { color: string, label: string, short: string }> = {
-    'Sick': { color: 'text-amber-600 bg-amber-50 border-amber-100', label: 'Sick', short: 'SK' },
+    'Sick': { color: 'text-[#8a7758] bg-[#f5efe3] border-[#EEE6DA]', label: 'Sick', short: 'SK' },
     'Seva': { color: 'text-indigo-600 bg-indigo-50 border-indigo-100', label: 'Seva', short: 'SV' },
     'Out of Station': { color: 'text-blue-600 bg-blue-50 border-blue-100', label: 'Out Station', short: 'OS' },
     'In Center': { color: 'text-emerald-600 bg-emerald-50 border-emerald-100', label: 'In Center', short: 'IC' },

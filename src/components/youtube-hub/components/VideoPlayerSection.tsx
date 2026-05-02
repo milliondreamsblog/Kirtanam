@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { Clock, Radio, Heart, Share2 } from "lucide-react";
+import { Heart, Share2, ExternalLink } from "lucide-react";
 import OptimizedVideoPlayer from "@/components/OptimizedVideoPlayer";
 import { openExternal } from "@/lib/device";
 import { logOpenExternal } from "@/lib/auth-client";
@@ -37,11 +36,11 @@ export default function VideoPlayerSection({
   const isFav = activeVideoId ? favoriteIds.includes(activeVideoId) : false;
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* ── Player ─────────────────────────────────────────────────────── */}
+    <div className="flex flex-col">
+      {/* Player — 12px corner, no shadow drama */}
       <div
         ref={playerRef}
-        className="order-1 lg:order-2 scroll-mt-24 aspect-video bg-black rounded-[2rem] overflow-hidden shadow-2xl relative"
+        className="scroll-mt-24 aspect-video bg-black overflow-hidden relative rounded-xl ring-1 ring-black/5"
       >
         {activeVideoId ? (
           <OptimizedVideoPlayer
@@ -52,8 +51,8 @@ export default function VideoPlayerSection({
             thumbnail={activeVideo?.thumbnail}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-900 px-6 text-center">
-            <p className="text-white/50 font-bold text-sm uppercase tracking-widest leading-loose">
+          <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 px-6 text-center">
+            <p className="text-[13px] font-medium text-neutral-400">
               {activeTab === "live"
                 ? "No live streams currently"
                 : "Select a video from the list to start watching"}
@@ -62,101 +61,98 @@ export default function VideoPlayerSection({
         )}
       </div>
 
-      {/* ── Video Info Card ─────────────────────────────────────────────── */}
+      {/* Info row — title + meta on the left, actions on the right */}
       {activeVideo && (
-        <div className="order-2 lg:order-3 bg-white p-6 sm:p-10 rounded-[2.5rem] border border-slate-100 shadow-sm">
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+        <div className="mt-4 flex items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <h2 className="font-display text-[20px] font-semibold leading-snug text-pine sm:text-[22px]">
+              {activeVideo.title}
+            </h2>
 
-            {/* Title + Meta */}
-            <div className="space-y-3 flex-1">
-              <h2 className="text-xl sm:text-2xl font-outfit font-black text-devo-950 tracking-tight leading-tight">
-                {activeVideo.title}
-              </h2>
-              <div className="flex items-center gap-4 text-slate-400 text-xs font-bold uppercase tracking-widest flex-wrap">
-                {activeVideo.date && (
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {activeVideo.date}
+            <div className="mt-1.5 flex items-center gap-2 text-[12px] text-neutral-500">
+              {activeChannel?.name && (
+                <span className="truncate font-medium text-neutral-700">
+                  {activeChannel.name}
+                </span>
+              )}
+              {activeChannel?.name && activeVideo.date && (
+                <span className="text-neutral-300">·</span>
+              )}
+              {activeVideo.date && <span>{activeVideo.date}</span>}
+              {isLive && (
+                <>
+                  <span className="text-neutral-300">·</span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C97064] opacity-60" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#C97064]" />
+                    </span>
+                    <span className="font-medium text-[#C97064]">Live</span>
                   </span>
-                )}
-                <span
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black ${
-                    isLive
-                      ? "bg-red-50 text-red-600"
-                      : "bg-green-50 text-green-600"
-                  }`}
-                >
-                  <Radio
-                    className={`w-3.5 h-3.5 ${isLive ? "animate-pulse" : ""}`}
-                  />
-                  {isLive ? "LIVE" : activeTab.toUpperCase()}
-                </span>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2 shrink-0">
-              {/* Watch on YouTube */}
-              <button
-                onClick={() => {
-                  if (!activeVideoId) return;
-                  logOpenExternal(activeVideoId);
-                  openExternal(
-                    `https://www.youtube.com/watch?v=${activeVideoId}`
-                  );
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white rounded-xl hover:bg-[#cc0000] transition-all shadow-md active:scale-95"
-                title="Watch on YouTube"
-              >
-                {/* YouTube logo SVG */}
-                <svg
-                  className="w-4 h-4 shrink-0"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                </svg>
-                <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">
-                  Watch on YouTube
-                </span>
-              </button>
-
-              {/* Favorite */}
-              <button
-                onClick={() => activeVideoId && onToggleFavorite(activeVideoId)}
-                className={`p-3 rounded-xl transition-all group border ${
-                  isFav
-                    ? "bg-red-50 border-red-100 text-red-600"
-                    : "bg-slate-50 border-slate-100 text-slate-400 hover:bg-slate-100"
-                }`}
-                title={isFav ? "Remove from Favorites" : "Add to Favorites"}
-              >
-                <Heart
-                  className={`w-5 h-5 ${
-                    isFav ? "fill-red-600" : "group-hover:text-red-500"
-                  }`}
-                />
-              </button>
-
-              {/* Share */}
-              <button
-                onClick={onShare}
-                className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all active:scale-95"
-                title="Share this lecture"
-              >
-                <Share2 className="w-5 h-5 text-slate-400" />
-              </button>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Tagline */}
-          <p className="text-slate-400 text-sm font-medium leading-relaxed border-t border-slate-50 pt-4">
-            Distraction-free devotional viewing. All content is curated from
-            approved spiritual channels. Your favorites appear here
-            automatically for quick access.
-          </p>
+          {/* Action buttons — ghost icon buttons */}
+          <div className="flex flex-shrink-0 items-center gap-1">
+            <ActionButton
+              onClick={() => activeVideoId && onToggleFavorite(activeVideoId)}
+              label={isFav ? "Remove from favorites" : "Add to favorites"}
+              active={isFav}
+            >
+              <Heart
+                className={`h-4 w-4 ${
+                  isFav ? "fill-[#3E4A45] text-[#3E4A45]" : ""
+                }`}
+              />
+            </ActionButton>
+
+            <ActionButton onClick={onShare} label="Share">
+              <Share2 className="h-4 w-4" />
+            </ActionButton>
+
+            <ActionButton
+              onClick={() => {
+                if (!activeVideoId) return;
+                logOpenExternal(activeVideoId);
+                openExternal(`https://www.youtube.com/watch?v=${activeVideoId}`);
+              }}
+              label="Open on YouTube"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </ActionButton>
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+function ActionButton({
+  children,
+  onClick,
+  label,
+  active = false,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  label: string;
+  active?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={label}
+      aria-label={label}
+      className={`flex h-9 w-9 items-center justify-center rounded-md transition-colors ${
+        active
+          ? "bg-[#e6ebe2] text-[#3E4A45]"
+          : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

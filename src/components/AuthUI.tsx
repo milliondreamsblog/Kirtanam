@@ -60,7 +60,7 @@ export default function AuthUI({ redirectTo = "/admin" }: AuthUIProps) {
             <div className="space-y-4">
               <p className="font-display text-5xl leading-none text-devo-950 sm:text-6xl lg:text-7xl">
                 Enter the
-                <span className="ml-3 inline-block bg-gradient-to-r from-devo-700 via-devo-500 to-amber-500 bg-clip-text text-transparent">
+                <span className="ml-3 inline-block bg-gradient-to-r from-devo-700 via-devo-400 to-[#C9B59A] bg-clip-text text-transparent">
                   devotional archive
                 </span>
               </p>

@@ -142,8 +142,8 @@ export default function Home() {
       <div className="max-w-xl mx-auto mt-10 sm:mt-20 px-4 mb-20">
         <div className="bg-white/80 backdrop-blur-2xl p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(249,115,22,0.15)] border border-white ring-1 ring-slate-200 space-y-6 sm:space-y-8 animate-in zoom-in duration-300">
            <div className="text-center">
-             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-orange-100 to-orange-200 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-100">
-               <UserPlus className="w-8 h-8 sm:w-10 sm:h-10 text-orange-600" />
+             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#e6ebe2] to-[#B9C7B1] rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#e6ebe2]">
+               <UserPlus className="w-8 h-8 sm:w-10 sm:h-10 text-[#647a63]" />
              </div>
              <h2 className="text-2xl sm:text-3xl font-outfit font-black text-slate-900 tracking-tight">Finish Registration</h2>
              <p className="text-slate-400 mt-2 font-medium text-sm sm:text-base">Almost there! We need a few more details.</p>
@@ -154,17 +154,17 @@ export default function Home() {
               
               <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 <div className="space-y-1">
-                  <input type="text" required placeholder="Your Full Name" value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full px-6 py-4 sm:px-8 sm:py-5 bg-gradient-to-br from-white to-slate-50/50 border border-slate-200 rounded-2xl focus:border-orange-400 focus:ring-4 focus:ring-orange-50 outline-none transition-all font-bold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 hover:border-slate-300" />
+                  <input type="text" required placeholder="Your Full Name" value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full px-6 py-4 sm:px-8 sm:py-5 bg-gradient-to-br from-white to-slate-50/50 border border-slate-200 rounded-2xl focus:border-[#9bae97] focus:ring-4 focus:ring-[#f4f6f3] outline-none transition-all font-bold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 hover:border-slate-300" />
                 </div>
                 <div className="space-y-1">
-                  <input type="tel" required placeholder="Mobile Number" value={regMobile} onChange={(e) => setRegMobile(e.target.value)} className="w-full px-6 py-4 sm:px-8 sm:py-5 bg-gradient-to-br from-white to-slate-50/50 border border-slate-200 rounded-2xl focus:border-orange-400 focus:ring-4 focus:ring-orange-50 outline-none transition-all font-bold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 hover:border-slate-300" />
+                  <input type="tel" required placeholder="Mobile Number" value={regMobile} onChange={(e) => setRegMobile(e.target.value)} className="w-full px-6 py-4 sm:px-8 sm:py-5 bg-gradient-to-br from-white to-slate-50/50 border border-slate-200 rounded-2xl focus:border-[#9bae97] focus:ring-4 focus:ring-[#f4f6f3] outline-none transition-all font-bold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 hover:border-slate-300" />
                 </div>
                 <div className="space-y-1">
-                  <input type="text" required placeholder="Temple / Center Name" value={regTemple} onChange={(e) => setRegTemple(e.target.value)} className="w-full px-6 py-4 sm:px-8 sm:py-5 bg-gradient-to-br from-white to-slate-50/50 border border-slate-200 rounded-2xl focus:border-orange-400 focus:ring-4 focus:ring-orange-50 outline-none transition-all font-bold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 hover:border-slate-300" />
+                  <input type="text" required placeholder="Temple / Center Name" value={regTemple} onChange={(e) => setRegTemple(e.target.value)} className="w-full px-6 py-4 sm:px-8 sm:py-5 bg-gradient-to-br from-white to-slate-50/50 border border-slate-200 rounded-2xl focus:border-[#9bae97] focus:ring-4 focus:ring-[#f4f6f3] outline-none transition-all font-bold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 hover:border-slate-300" />
                 </div>
               </div>
 
-              <button disabled={isSubmitting} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-extrabold py-5 rounded-2xl transition-all shadow-xl shadow-orange-100 active:scale-[0.98] disabled:opacity-70 flex justify-center items-center gap-3 text-lg sm:text-xl">
+              <button disabled={isSubmitting} className="w-full bg-gradient-to-r from-[#7A8F78] to-[#647a63] hover:from-[#647a63] hover:to-[#3E4A45] text-white font-extrabold py-5 rounded-2xl transition-all shadow-xl shadow-[#e6ebe2] active:scale-[0.98] disabled:opacity-70 flex justify-center items-center gap-3 text-lg sm:text-xl">
                 {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : "Complete My Registration"}
               </button>
            </form>

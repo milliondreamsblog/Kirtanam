@@ -53,7 +53,7 @@ export default function BCDBManager({ session, isAdmin }: BCDBManagerProps) {
   const getRowColor = (color: string) => {
     switch (color?.toLowerCase()) {
        case 'yellow': return 'bg-yellow-100/40 hover:bg-yellow-200/60';
-       case 'saffron': return 'bg-orange-100/50 hover:bg-orange-200/70';
+       case 'saffron': return 'bg-[#e6ebe2]/50 hover:bg-[#B9C7B1]/70';
        case 'blue': return 'bg-blue-100/40 hover:bg-blue-200/60';
        case 'white': return 'bg-white hover:bg-slate-50/50';
        default: return 'bg-white hover:bg-slate-50/50';
@@ -558,7 +558,7 @@ export default function BCDBManager({ session, isAdmin }: BCDBManagerProps) {
                                <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center font-black text-lg md:text-2xl shadow-inner group-hover:rotate-3 transition-all relative overflow-hidden flex-shrink-0 ${
                                  r.colour?.toLowerCase() === 'blue' ? 'bg-blue-200 text-blue-900' : 
                                  r.colour?.toLowerCase() === 'yellow' ? 'bg-yellow-300 text-yellow-900 font-black' :
-                                 r.colour?.toLowerCase() === 'saffron' ? 'bg-orange-300 text-orange-900 font-black' :
+                                 r.colour?.toLowerCase() === 'saffron' ? 'bg-[#B9C7B1] text-[#232b27] font-black' :
                                  'bg-slate-200 text-slate-800'
                                }`}>
                                  {r.photo_url && (

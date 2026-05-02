@@ -60,11 +60,11 @@ export default function DirectoryView() {
       "bg-emerald-500 text-white border-emerald-400",
       "bg-indigo-500 text-white border-indigo-400",
       "bg-rose-500 text-white border-rose-400",
-      "bg-amber-500 text-white border-amber-400",
+      "bg-[#C9B59A] text-white border-[#C9B59A]",
       "bg-violet-500 text-white border-violet-400",
       "bg-cyan-500 text-white border-cyan-400",
       "bg-blue-500 text-white border-blue-400",
-      "bg-orange-500 text-white border-orange-400"
+      "bg-[#7A8F78] text-white border-[#9bae97]"
     ];
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
