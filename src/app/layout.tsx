@@ -14,7 +14,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Ashram Connect",
+  title: "Kritaman",
   description:
     "Private ashram portal for devotional lectures, attendance, policy access, and community operations.",
 };
@@ -46,14 +46,14 @@ export default function RootLayout({
               <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-6 text-center sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:text-left">
                 <div>
                   <p className="font-display text-2xl font-semibold text-devo-950">
-                    Ashram Connect
+                    Kritaman
                   </p>
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-devo-700/70">
                     Lectures, attendance, directory, policy access
                   </p>
                 </div>
                 <p className="text-sm font-medium text-devo-900/70">
-                  © {new Date().getFullYear()} Ashram Connect. Internal community
+                  © {new Date().getFullYear()} Kritaman. Internal community
                   portal.
                 </p>
               </div>

@@ -899,7 +899,7 @@ export default function AdminPanel() {
                   <div className="relative z-10 sm:mt-4 flex-1 min-w-0">
                     <div>
                       <h3 className="text-lg sm:text-2xl font-black text-devo-950 uppercase tracking-tight sm:normal-case">BCDB Portal</h3>
-                      <p className="text-slate-500 font-medium text-[10px] sm:text-sm mt-0.5 sm:mt-1 leading-relaxed line-clamp-1 sm:line-clamp-none">Access the Ashram Connect directory, manage personnel records, and handle master imports.</p>
+                      <p className="text-slate-500 font-medium text-[10px] sm:text-sm mt-0.5 sm:mt-1 leading-relaxed line-clamp-1 sm:line-clamp-none">Access the Kritaman directory, manage personnel records, and handle master imports.</p>
                     </div>
                     <div className="flex items-center gap-2 text-indigo-900 font-black text-[10px] uppercase tracking-widest mt-1 sm:mt-4">
                       Enter <ArrowRight className="w-3 h-3 group-hover:translate-x-2 transition-transform" />

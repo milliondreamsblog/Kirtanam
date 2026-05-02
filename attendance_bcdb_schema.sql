@@ -1,5 +1,5 @@
--- BCDB (Ashram Connect) Table Schema
--- Automatically generated mapping from "NVCC Ashram Connect.xlsx"
+-- BCDB (Kritaman) Table Schema
+-- Automatically generated mapping from "NVCC Kritaman.xlsx"
 
 -- [REQUIRED] Enable UUID extension for id generation
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

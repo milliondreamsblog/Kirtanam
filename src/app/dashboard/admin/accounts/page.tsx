@@ -334,6 +334,15 @@ export default function AccountsPage() {
   };
 
   const saveChannel = async () => {
+    if (!channelDraft.channel_id?.trim()) {
+      alert("Channel ID is required (the UC... value)");
+      return;
+    }
+    if (!channelDraft.name?.trim()) {
+      alert("Channel name is required");
+      return;
+    }
+
     const method = channelDraft.id ? "PUT" : "POST";
     const res = await authFetch("/api/admin/youtube-channels", {
       method,
@@ -342,7 +351,13 @@ export default function AccountsPage() {
     });
 
     if (!res.ok) {
-      alert("Failed to save channel");
+      let detail = `HTTP ${res.status}`;
+      try {
+        const body = await res.json();
+        if (body?.error) detail = body.error;
+      } catch {}
+      console.error("[saveChannel] failed:", detail);
+      alert(`Failed to save channel: ${detail}`);
       return;
     }
 

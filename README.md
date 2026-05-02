@@ -1,4 +1,4 @@
-This is the Ashram Connect / Kirtanam app built with [Next.js](https://nextjs.org).
+This is the Kritaman app built with [Next.js](https://nextjs.org).
 
 Live site: [https://kirtanam.vercel.app](https://kirtanam.vercel.app)
 

@@ -16,7 +16,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
  */
 const config: CapacitorConfig = {
   appId: "com.ashramconnect.app",
-  appName: "Ashram Connect",
+  appName: "Kritaman",
   // webDir is unused when server.url is set, but Capacitor requires the field.
   webDir: "out",
   server: {

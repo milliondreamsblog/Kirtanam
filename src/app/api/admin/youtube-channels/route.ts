@@ -55,15 +55,22 @@ export async function POST(request: NextRequest) {
     if ("error" in auth) return auth.error;
 
     const body = await request.json();
+    // Strip falsy id so DB generates one — sending id:"" causes uuid cast error
+    if (!body.id) delete body.id;
+
     const { data, error } = await supabaseAdmin!
       .from("youtube_channels")
       .insert([body])
       .select();
 
-    if (error) throw error;
+    if (error) {
+      console.error("[POST /api/admin/youtube-channels] insert error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
     return NextResponse.json({ data });
-  } catch (err) {
-    return NextResponse.json({ error: "Failed to insert" }, { status: 500 });
+  } catch (err: any) {
+    console.error("[POST /api/admin/youtube-channels] error:", err);
+    return NextResponse.json({ error: err?.message ?? "Failed to insert" }, { status: 500 });
   }
 }
 

@@ -48,7 +48,7 @@ export default function PortalPage() {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 rounded-full border border-devo-200/80 bg-white/70 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-devo-800">
                   <Sparkles className="h-3.5 w-3.5" />
-                  Ashram Connect
+                  Kritaman
                 </div>
                 <div className="space-y-4">
                   <h1 className="font-display max-w-4xl text-5xl leading-[0.92] text-devo-950 sm:text-6xl lg:text-7xl">

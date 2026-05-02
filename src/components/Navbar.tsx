@@ -114,7 +114,7 @@ export default function Navbar() {
           </div>
           <div className="space-y-0.5">
             <span className="font-display text-3xl font-semibold leading-none text-devo-950">
-              Ashram Connect
+              Kritaman
             </span>
             <p className="text-[10px] font-black uppercase tracking-[0.26em] text-devo-700/60">
               Daily spiritual operations
@@ -265,7 +265,7 @@ export default function Navbar() {
             <span className="font-display text-lg font-semibold">A</span>
           </div>
           <span className="font-display text-2xl font-semibold leading-none text-devo-950">
-            Ashram Connect
+            Kritaman
           </span>
         </NextLink>
 

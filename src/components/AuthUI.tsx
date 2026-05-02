@@ -110,7 +110,7 @@ export default function AuthUI({ redirectTo = "/admin" }: AuthUIProps) {
                 Sign In
               </p>
               <h2 className="font-display text-4xl font-semibold text-devo-950 sm:text-5xl">
-                Continue to Ashram Connect
+                Continue to Kritaman
               </h2>
               <p className="text-sm leading-6 text-devo-900/70">
                 Use your approved Google account. Access is granted based on your

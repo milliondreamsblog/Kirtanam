@@ -385,7 +385,7 @@ export default function BCDBManager({ session, isAdmin }: BCDBManagerProps) {
                   <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 opacity-60">Master Database</span>
                </div>
                <h2 className="text-3xl sm:text-6xl font-black tracking-tighter font-outfit">BCDB Portal</h2>
-               <p className="text-indigo-200 font-bold text-base sm:text-lg opacity-80 mt-2">Manage the NVCC Ashram Connect directory with high-precision synchronization.</p>
+               <p className="text-indigo-200 font-bold text-base sm:text-lg opacity-80 mt-2">Manage the NVCC Kritaman directory with high-precision synchronization.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                <div className="flex-1 md:flex-none bg-white/10 px-6 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl backdrop-blur-md border border-white/10 text-center">
