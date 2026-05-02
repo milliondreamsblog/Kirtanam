@@ -46,6 +46,8 @@ next-env.d.ts
 /android/app/build/
 /android/build/
 /android/.gradle/
+/android/.gradle-user/
+/android/.android-user/
 /android/local.properties
 /android/captures/
 /android/app/release/
