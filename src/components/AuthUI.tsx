@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { isAppEnvironment } from "@/lib/platform";
 import {
   AlertCircle,
   ArrowRight,
@@ -24,12 +25,22 @@ export default function AuthUI({ redirectTo = "/admin" }: AuthUIProps) {
     setAuthError("");
 
     try {
-      const targetUrl = window.location.origin + redirectTo;
+      const isApp = isAppEnvironment();
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      // In the Capacitor app we cannot let the WebView navigate to
+      // accounts.google.com (Google blocks OAuth in embedded WebViews, and
+      // our `allowNavigation` punts it to the system browser, where the
+      // session would land outside the app). Instead, open the OAuth URL in
+      // an in-app Custom Tab and bring the result back via a deep link.
+      const targetUrl = isApp
+        ? "com.ashramconnect.app://auth-callback"
+        : window.location.origin + redirectTo;
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: targetUrl,
+          skipBrowserRedirect: isApp,
           queryParams: {
             access_type: "offline",
             prompt: "consent",
@@ -38,6 +49,11 @@ export default function AuthUI({ redirectTo = "/admin" }: AuthUIProps) {
       });
 
       if (error) throw error;
+
+      if (isApp && data?.url) {
+        const { Browser } = await import("@capacitor/browser");
+        await Browser.open({ url: data.url, presentationStyle: "popover" });
+      }
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Failed to connect to Google";
