@@ -51,6 +51,10 @@ export default function AuthUI({ redirectTo = "/admin" }: AuthUIProps) {
       if (error) throw error;
 
       if (isApp && data?.url) {
+        // TEMP DEBUG: confirm the OAuth URL Supabase generated. Look for
+        // redirect_to= and check whether it ends in the custom scheme or
+        // the web origin. Remove once OAuth is verified working.
+        alert("OAuth URL:\n\n" + data.url);
         const { Browser } = await import("@capacitor/browser");
         await Browser.open({ url: data.url, presentationStyle: "popover" });
       }
