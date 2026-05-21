@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { authFetch } from "@/lib/auth-client";
 import type { VideoContentPage } from "../types";
@@ -55,8 +56,13 @@ export function useVideoContent(
     placeholderData: (prev) => prev,
   });
 
-  // Flatten all pages into a single video array for easy consumption
-  const videos = query.data?.pages.flatMap((page) => page.items) ?? [];
+  // Flatten all pages into a single video array. Memoized so the reference
+  // stays stable across renders that don't change the underlying pages —
+  // critical for consumers that put `videos` in a useEffect dependency.
+  const videos = useMemo(
+    () => query.data?.pages.flatMap((page) => page.items) ?? [],
+    [query.data?.pages],
+  );
 
   // Channel logo lives on the first page (returned by the YouTube API alongside items)
   const channelLogo = query.data?.pages[0]?.channelLogo ?? null;

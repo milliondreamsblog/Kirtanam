@@ -108,16 +108,22 @@ export default function ChannelViewPage({
   const isShowingPlaylist = activePlaylistId !== null;
   const isMainVideoTab    = activeTab === "videos" && !isShowingPlaylist;
 
+  // Depend on a primitive (the first video's id) — not the array reference —
+  // so the effect only re-runs when the underlying data actually changes.
+  // Using the array would re-fire on every render and infinite-loop with the
+  // async router.push inside onVideoSelect.
+  const firstVideoId = channelVideos[0]?.id ?? null;
+
   useEffect(() => {
     if (
       !activeVideoId &&
-      channelVideos.length > 0 &&
+      firstVideoId &&
       (isMainVideoTab || isShowingPlaylist)
     ) {
       onVideoSelect(channelVideos[0]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [channelVideos, activeVideoId, isMainVideoTab, isShowingPlaylist]);
+  }, [firstVideoId, activeVideoId, isMainVideoTab, isShowingPlaylist]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 

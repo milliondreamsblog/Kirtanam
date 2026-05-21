@@ -45,8 +45,6 @@ export default function Navbar() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showDesktopMore, setShowDesktopMore] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const role = Number(profile?.role);
 
   useEffect(() => {
@@ -62,16 +60,6 @@ export default function Navbar() {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Compact when scrolled — but expand on hover so it never feels stuck.
-  const compact = scrolled && !hovered;
 
   const getInitials = () => {
     if (profile?.full_name) {
@@ -89,97 +77,48 @@ export default function Navbar() {
 
   return (
     <>
-      <nav
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className={`glass-panel sticky top-0 z-[100] hidden items-center justify-between md:flex transition-[height,padding,border-radius] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          compact
-            ? "mx-0 h-12 rounded-none border-x-0 border-t-0 px-4"
-            : "mx-0 h-16 rounded-none border-x-0 border-t-0 px-6 lg:px-8"
-        }`}
-      >
+      {/* Desktop navbar — stable fixed height, no scroll/hover animation */}
+      <nav className="glass-panel sticky top-0 z-40 hidden h-16 items-center justify-between border-x-0 border-t-0 px-6 md:flex lg:px-8">
         <NextLink href="/" className="group flex shrink-0 items-center gap-3">
-          <div
-            className={`flex items-center justify-center rounded-[1rem] bg-gradient-to-br from-devo-700 via-devo-400 to-[#C9B59A] text-white shadow-lg transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105 ${
-              compact ? "h-8 w-8" : "h-11 w-11"
-            }`}
-          >
-            <span
-              className={`font-display font-semibold transition-all duration-500 ${
-                compact ? "text-base" : "text-2xl"
-              }`}
-            >
-              K
-            </span>
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-devo-700 via-devo-400 to-[#C9B59A] text-white shadow-lg transition-transform group-hover:scale-105">
+            <span className="font-display text-2xl font-semibold">K</span>
           </div>
-          <div
-            className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              compact
-                ? "max-w-[140px] opacity-90"
-                : "max-w-[260px] opacity-100 space-y-0.5"
-            }`}
-          >
-            <span
-              className={`font-display font-semibold leading-none text-devo-950 block transition-all duration-500 ${
-                compact ? "text-lg" : "text-3xl"
-              }`}
-            >
+          <div className="space-y-0.5">
+            <span className="block font-display text-2xl font-semibold leading-none text-devo-950">
               Kritaman
             </span>
-            <p
-              className={`text-[10px] font-medium tracking-[0.18em] text-[#7A8F78] transition-all duration-300 ${
-                compact ? "max-h-0 opacity-0" : "max-h-5 opacity-100"
-              }`}
-            >
+            <p className="text-[10px] font-medium tracking-[0.18em] text-[#7A8F78]">
               hare kṛṣṇa
             </p>
           </div>
         </NextLink>
 
-        <div
-          className={`flex items-center transition-[gap] duration-500 ${
-            compact ? "gap-2" : "gap-4"
-          }`}
-        >
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setShowProfileModal(true)}
-            className={`group flex items-center rounded-2xl border border-white/80 bg-white/70 shadow-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              compact ? "h-8 w-8 justify-center" : "gap-2 px-4 py-2.5"
-            }`}
+            className="group flex h-10 items-center gap-2 rounded-2xl border border-white/80 bg-white/70 px-3 shadow-sm transition-colors hover:bg-white"
             title="My Profile"
           >
-            <div
-              className={`flex items-center justify-center rounded-xl bg-devo-100 font-black text-devo-700 transition-colors group-hover:bg-devo-600 group-hover:text-white ${
-                compact ? "h-6 w-6 text-[10px]" : "h-8 w-8 text-xs"
-              }`}
-            >
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-devo-100 text-[10px] font-black text-devo-700 transition-colors group-hover:bg-devo-600 group-hover:text-white">
               {getInitials()}
             </div>
-            <span
-              className={`overflow-hidden whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-devo-900 transition-all duration-500 ${
-                compact ? "max-w-0 opacity-0" : "max-w-[120px] opacity-100"
-              }`}
-            >
+            <span className="whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-devo-900">
               My Profile
             </span>
           </button>
 
           <div className="relative">
             <button
-              onClick={() => setShowDesktopMore(!showDesktopMore)}
-              className={`flex items-center rounded-2xl border shadow-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              onClick={() => setShowDesktopMore((v) => !v)}
+              className={`flex h-10 items-center gap-2 rounded-2xl border px-3 shadow-sm transition-colors ${
                 showDesktopMore
                   ? "border-devo-950 bg-devo-950 text-white"
                   : "border-white/80 bg-white/70 text-slate-700 hover:bg-white"
-              } ${compact ? "h-8 w-8 justify-center" : "gap-2 px-4 py-2.5"}`}
+              }`}
               title="More"
             >
-              <MoreHorizontal className={compact ? "h-4 w-4" : "h-5 w-5"} />
-              <span
-                className={`overflow-hidden whitespace-nowrap text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
-                  compact ? "max-w-0 opacity-0" : "max-w-[80px] opacity-100"
-                }`}
-              >
+              <MoreHorizontal className="h-5 w-5" />
+              <span className="whitespace-nowrap text-[10px] font-black uppercase tracking-widest">
                 More
               </span>
             </button>
@@ -187,15 +126,15 @@ export default function Navbar() {
             {showDesktopMore && (
               <>
                 <div
-                  className="fixed inset-0 z-10"
+                  className="fixed inset-0 z-40"
                   onClick={() => setShowDesktopMore(false)}
                 />
-                <div className="absolute right-0 top-full z-20 mt-3 w-64 rounded-[1.75rem] border border-white/80 bg-white/92 p-2 shadow-2xl backdrop-blur-3xl animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute right-0 top-full z-50 mt-3 w-64 rounded-3xl border border-white/80 bg-white/95 p-2 shadow-2xl backdrop-blur-3xl">
                   {isBcdb && (
                     <NextLink
                       href="/policy-manual"
                       onClick={() => setShowDesktopMore(false)}
-                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-all ${
+                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors ${
                         pathname === "/policy-manual"
                           ? "bg-indigo-50 text-indigo-700"
                           : "text-slate-600 hover:bg-slate-50"
@@ -212,7 +151,7 @@ export default function Navbar() {
                     <NextLink
                       href="/directory"
                       onClick={() => setShowDesktopMore(false)}
-                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-all ${
+                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors ${
                         pathname === "/directory"
                           ? "bg-emerald-50 text-emerald-700"
                           : "text-slate-600 hover:bg-slate-50"
@@ -229,7 +168,7 @@ export default function Navbar() {
                     <NextLink
                       href="/admin"
                       onClick={() => setShowDesktopMore(false)}
-                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-all ${
+                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors ${
                         pathname.startsWith("/admin")
                           ? "bg-devo-50 text-devo-700"
                           : "text-slate-600 hover:bg-slate-50"
@@ -249,7 +188,7 @@ export default function Navbar() {
                       await supabase.auth.signOut();
                       window.location.href = "/";
                     }}
-                    className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-slate-400 transition-all hover:bg-red-50 hover:text-red-600"
+                    className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
                   >
                     <LogOut className="h-4 w-4" />
                     <span className="flex-1 text-[10px] font-black uppercase tracking-widest">
@@ -263,10 +202,11 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <nav className="glass-panel sticky top-0 z-[100] flex h-14 items-center justify-between rounded-none border-x-0 border-t-0 px-4 md:hidden">
+      {/* Mobile top bar — fixed height */}
+      <nav className="glass-panel sticky top-0 z-40 flex h-14 items-center justify-between border-x-0 border-t-0 px-4 md:hidden">
         <NextLink href="/" className="group flex shrink-0 items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-devo-700 via-devo-400 to-[#C9B59A] text-white shadow-sm">
-            <span className="font-display text-lg font-semibold">A</span>
+            <span className="font-display text-lg font-semibold">K</span>
           </div>
           <span className="font-display text-2xl font-semibold leading-none text-devo-950">
             Kritaman
@@ -277,7 +217,7 @@ export default function Navbar() {
           {role === 1 && (
             <NextLink
               href="/admin"
-              className={`p-2 transition-all active:scale-95 ${
+              className={`p-2 transition-colors active:scale-95 ${
                 pathname.startsWith("/admin")
                   ? "text-devo-600"
                   : "text-slate-400 hover:text-devo-600"
@@ -288,17 +228,18 @@ export default function Navbar() {
           )}
           <button
             onClick={() => setShowProfileModal(true)}
-            className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-devo-100 text-[10px] font-black text-devo-700 shadow-sm transition-all active:scale-90"
+            className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-devo-100 text-[10px] font-black text-devo-700 shadow-sm transition-transform active:scale-90"
           >
             {getInitials()}
           </button>
         </div>
       </nav>
 
-      <nav className="glass-panel safe-area-bottom fixed bottom-3 left-3 right-3 z-[100] flex items-center justify-between gap-1 rounded-[1.6rem] px-4 py-3 md:hidden">
+      {/* Mobile bottom tab bar — fixed, sits above the layout's pb-24 spacer */}
+      <nav className="glass-panel safe-area-bottom fixed bottom-3 left-3 right-3 z-40 flex h-16 items-center justify-between gap-1 rounded-[1.6rem] px-4 md:hidden">
         <NextLink href="/" className="group flex flex-1 flex-col items-center gap-1">
           <div
-            className={`rounded-xl p-2 transition-all group-active:scale-95 ${
+            className={`rounded-xl p-2 transition-colors group-active:scale-95 ${
               isHome ? "bg-devo-50 text-devo-600 shadow-inner" : "text-slate-400"
             }`}
           >
@@ -314,11 +255,11 @@ export default function Navbar() {
         </NextLink>
 
         <button
-          onClick={() => setShowMoreMenu(!showMoreMenu)}
-          className="flex flex-1 flex-col items-center gap-1"
+          onClick={() => setShowMoreMenu((v) => !v)}
+          className="group flex flex-1 flex-col items-center gap-1"
         >
           <div
-            className={`rounded-xl p-2 transition-all group-active:scale-95 ${
+            className={`rounded-xl p-2 transition-colors group-active:scale-95 ${
               showMoreMenu
                 ? "bg-indigo-50 text-indigo-600 shadow-inner"
                 : "text-slate-400"
@@ -341,18 +282,18 @@ export default function Navbar() {
       </nav>
 
       {showMoreMenu && (
-        <div className="fixed inset-0 z-[1000] animate-in fade-in duration-300 md:hidden">
+        <div className="fixed inset-0 z-50 md:hidden">
           <div
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setShowMoreMenu(false)}
           />
-          <div className="absolute bottom-[84px] left-4 right-4 overflow-hidden rounded-[2rem] border border-white/70 bg-white/95 shadow-2xl backdrop-blur-3xl animate-in slide-in-from-bottom-8 duration-500">
+          <div className="absolute bottom-[88px] left-4 right-4 overflow-hidden rounded-[2rem] border border-white/70 bg-white/95 shadow-2xl backdrop-blur-3xl">
             <div className="flex flex-col py-2">
               {isBcdb && (
                 <NextLink
                   href="/policy-manual"
                   onClick={() => setShowMoreMenu(false)}
-                  className={`flex items-center gap-4 px-6 py-3.5 transition-all ${
+                  className={`flex items-center gap-4 px-6 py-3.5 transition-colors ${
                     pathname === "/policy-manual"
                       ? "bg-indigo-50/50"
                       : "hover:bg-slate-50"
@@ -381,7 +322,7 @@ export default function Navbar() {
                 <NextLink
                   href="/directory"
                   onClick={() => setShowMoreMenu(false)}
-                  className={`flex items-center gap-4 px-6 py-3.5 transition-all ${
+                  className={`flex items-center gap-4 px-6 py-3.5 transition-colors ${
                     pathname === "/directory"
                       ? "bg-emerald-50/50"
                       : "hover:bg-slate-50"
@@ -411,7 +352,7 @@ export default function Navbar() {
                   setShowProfileModal(true);
                   setShowMoreMenu(false);
                 }}
-                className="flex items-center gap-4 px-6 py-3.5 text-left transition-all hover:bg-slate-50"
+                className="flex items-center gap-4 px-6 py-3.5 text-left transition-colors hover:bg-slate-50"
               >
                 <User className="h-4 w-4 text-slate-400" />
                 <span className="flex-1 text-[11px] font-black uppercase tracking-widest text-slate-600">
@@ -423,7 +364,7 @@ export default function Navbar() {
                 <NextLink
                   href="/admin"
                   onClick={() => setShowMoreMenu(false)}
-                  className={`flex items-center gap-4 px-6 py-3.5 transition-all ${
+                  className={`flex items-center gap-4 px-6 py-3.5 transition-colors ${
                     pathname.startsWith("/admin")
                       ? "bg-devo-50/50"
                       : "hover:bg-slate-50"
@@ -448,14 +389,14 @@ export default function Navbar() {
                 </NextLink>
               )}
 
-              <div className="my-2 mx-4 border-t border-slate-100" />
+              <div className="mx-4 my-2 border-t border-slate-100" />
 
               <button
                 onClick={async () => {
                   await supabase.auth.signOut();
                   window.location.href = "/";
                 }}
-                className="group flex items-center gap-4 px-6 py-3.5 text-left transition-all hover:bg-red-50"
+                className="group flex items-center gap-4 px-6 py-3.5 text-left transition-colors hover:bg-red-50"
               >
                 <LogOut className="h-4 w-4 text-slate-300 transition-colors group-hover:text-red-500" />
                 <span className="flex-1 text-[11px] font-black uppercase tracking-widest text-slate-400 transition-colors group-hover:text-red-600">
